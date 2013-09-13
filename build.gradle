@@ -31,6 +31,7 @@
 apply plugin: "base"
 apply plugin: "groovy"
 apply plugin: "cedarBuild"
+apply plugin: "cedarCopyright"
 apply plugin: "cedarPublish"
 
 // Load properties from standard configuration files (build.properties and local.properties)
@@ -53,6 +54,13 @@ dependencies {
 cedarLabel {
    projectName = "CedarBuild"
    projectVersion = config_mavenPublishVersion
+   repositories = [ projectDir, ]
+   mercurialPath = config_mercurialPath
+}
+
+cedarCopyright {
+   licensePattern = '^.*LICENSE$'
+   sourcePatterns = [ '^.*\\.java$', '^.*\\.groovy$', '^.*\\.gradle$', ]
    repositories = [ projectDir, ]
    mercurialPath = config_mercurialPath
 }
