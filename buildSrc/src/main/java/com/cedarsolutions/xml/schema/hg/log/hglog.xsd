@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
+  <xs:element name="log">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="logentry"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="logentry">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="tag"/>
+        <xs:element ref="author"/>
+        <xs:element ref="date"/>
+        <xs:element ref="msg"/>
+        <xs:element ref="paths"/>
+        <xs:element minOccurs="0" ref="copies"/>
+      </xs:sequence>
+      <xs:attribute name="node" use="required"/>
+      <xs:attribute name="revision" use="required" type="xs:integer"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="tag" type="xs:NCName"/>
+  <xs:element name="author">
+    <xs:complexType mixed="true">
+      <xs:attribute name="email" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="date" type="xs:NMTOKEN"/>
+  <xs:element name="msg">
+    <xs:complexType mixed="true">
+      <xs:attribute ref="xml:space" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="paths">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="path"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="path">
+    <xs:complexType mixed="true">
+      <xs:attribute name="action" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="copies">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="copy"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="copy">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:NCName">
+          <xs:attribute name="source" use="required" type="xs:NCName"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

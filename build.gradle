@@ -23,20 +23,31 @@
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 // http://stackoverflow.com/questions/1163173/why-use-gradle-instead-of-ant-or-maven
 
+// ***************
+// * Gradle setup
+// *************** 
+
+// Plugins
 apply plugin: "base"
 apply plugin: "groovy"
 apply plugin: "cedarBuild"
 apply plugin: "cedarPublish"
 
+// Load properties from standard configuration files (build.properties and local.properties)
 cedarProperties.loadStandardProperties()
+
+
+// ************************
+// * Project configuration
+// ************************
 
 group = "com.googlecode.cedar-common"
 def artifactId = "cedar-build"
 version = config_mavenPublishVersion
 
 dependencies {
-    compile gradleApi()
-    compile localGroovy()
+   compile gradleApi()
+   compile localGroovy()
 }
 
 cedarLabel {
@@ -109,4 +120,45 @@ install {
       pom.artifactId = artifactId
    }
 }
+
+
+// **********************
+// * General build tasks
+// **********************
+
+// Generate XML bindings for the Mercurial XML output
+task generateHgBindings << {
+   def resourcesDir = "gradle/resources"
+   def generatedDir = "buildSrc/src/main/java"
+   def schemaDir = generatedDir + "/com/cedarsolutions/xml/schema/hg/log"
+   def bindingsDir = generatedDir + "/com/cedarsolutions/xml/bindings/hg/log"
+   def bindingsPackage = "com.cedarsolutions.xml.bindings.hg.log"
+   def sourceXml = resourcesDir + "/hglog.xml"
+   def schema = schemaDir + "/hglog.xsd"
+
+   file(schemaDir).mkdirs()
+   file(bindingsDir).mkdirs()
+
+   ant.delete(quiet : "true") {
+      fileset(dir: schemaDir, includes : "*.xsd")
+      fileset(dir: bindingsDir, includes : "**/*.java")
+   }
+
+   ant.java(jar : config_trangJarPath, fork : "true", failonerror : "true") {
+      arg(value : sourceXml)
+      arg(value : schema)
+   }
+
+   ant.exec(executable : config_xjcPath) {
+      arg(value : "-d")
+      arg(value : generatedDir)
+      arg(value : "-p")
+      arg(value : bindingsPackage)
+      arg(value : "-xmlschema")
+      arg(value : schema)
+   }
+}
+
+// Generate all XML bindings
+task generateXmlBindings(dependsOn: generateHgBindings)
 

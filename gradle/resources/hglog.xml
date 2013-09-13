@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<log>
+<logentry revision="4" node="063b8c29aa706c2706423ebf1f085d7b484c3abf">
+<tag>tip</tag>
+<author email="pronovic@ieee.org">Kenneth J. Pronovici</author>
+<date>2012-04-03T11:06:13-05:00</date>
+<msg xml:space="preserve">Rename file2.txt to file2-renamed.txt.</msg>
+<paths>
+<path action="A">file2-renamed.txt</path>
+<path action="R">file2.txt</path>
+</paths>
+<copies>
+<copy source="file2.txt">file2-renamed.txt</copy>
+</copies>
+</logentry>
+<logentry revision="3" node="3b603c7ab60e9ecbed2db70e467c8811520f3a38">
+<author email="pronovic@ieee.org">Kenneth J. Pronovici</author>
+<date>2012-04-03T11:05:45-05:00</date>
+<msg xml:space="preserve">Add file2.txt.</msg>
+<paths>
+<path action="A">file2.txt</path>
+</paths>
+</logentry>
+<logentry revision="2" node="d20e1e25cfef98bd0a5807aa3e4d4e4c3321f1d3">
+<author email="pronovic@ieee.org">Kenneth J. Pronovici</author>
+<date>2012-03-25T13:08:17-05:00</date>
+<msg xml:space="preserve">Add files of other types.</msg>
+<paths>
+<path action="A">LICENSE</path>
+<path action="A">file.feature</path>
+<path action="A">file.java</path>
+<path action="A">file.rb</path>
+</paths>
+</logentry>
+<logentry revision="1" node="b2a4bfea98b8001621ff2ac83aaa232d1d9b6e13">
+<author email="pronovic@ieee.org">Kenneth J. Pronovici</author>
+<date>2012-03-25T11:40:25-05:00</date>
+<msg xml:space="preserve">Add a zip and a jar.</msg>
+<paths>
+<path action="A">file.jar</path>
+<path action="A">file.zip</path>
+</paths>
+</logentry>
+<logentry revision="0" node="c7f675ddf704b6fc49bf08a173f5a1c74fa5d597">
+<author email="pronovic@ieee.org">Kenneth J. Pronovici</author>
+<date>2012-03-24T14:22:09-05:00</date>
+<msg xml:space="preserve">Commit.</msg>
+<paths>
+<path action="A">file1.txt</path>
+<path action="A">folder/file2.txt</path>
+</paths>
+</logentry>
+</log>
