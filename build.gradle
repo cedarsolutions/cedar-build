@@ -31,12 +31,19 @@ apply plugin: "cedarPublish"
 cedarProperties.loadStandardProperties()
 
 group = "com.googlecode.cedar-common"
-def artifactId = "gradle-plugins"
+def artifactId = "cedar-build"
 version = config_mavenPublishVersion
 
 dependencies {
     compile gradleApi()
     compile localGroovy()
+}
+
+cedarLabel {
+   projectName = "CedarBuild"
+   projectVersion = config_mavenPublishVersion
+   repositories = [ projectDir, ]
+   mercurialPath = config_mercurialPath
 }
 
 cedarSigning {
@@ -70,13 +77,13 @@ uploadArchives {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
             pom.artifactId = artifactId
             pom.project {
-               name "Cedar Common Gradle Plugins"
+               name "Cedar Common Build Functionality"
                description "Gradle plugins, for use with a standardized build process."
                url "https://code.google.com/p/cedar-common/"
                scm {
                   url "scm:hg:https://code.google.com/p/cedar-common.gradle/"
-                  connection "scm:hg:https://code.google.com/p/cedar-common.gradle/"
-                  developerConnection "scm:hg:https://code.google.com/p/cedar-common.gradle/"
+                  connection "scm:hg:https://code.google.com/p/cedar-common.build/"
+                  developerConnection "scm:hg:https://code.google.com/p/cedar-common.build/"
                }
                licenses {
                   license {

@@ -31,15 +31,25 @@ class CedarBuildPlugin implements Plugin<Project> {
 
    @Override
    void apply(Project project) {
-      project.extensions.create("cedarSigning", CedarSigningPluginExtension, project)
       project.extensions.cedarProperties = new CedarProperties(project)
+      project.extensions.create("cedarSigning", CedarSigningPluginExtension, project)
+      project.extensions.create("cedarLabel", CedarLabelPluginExtension, project)
 
       project.convention.plugins.cedarBuild = new CedarBuildPluginConvention(project)
       project.convention.plugins.cedarSigning = new CedarSigningPluginConvention(project)
+      project.convention.plugins.cedarLabel = new CedarLabelPluginConvention(project)
 
       project.gradle.addListener(new TestSummary())
       project.gradle.taskGraph.whenReady { 
          taskGraph -> project.convention.plugins.cedarSigning.applySignatureConfiguration(taskGraph) 
+      }
+
+      project.task("validateLabelSetup") << {
+         project.cedarLabel.validateLabelConfig()
+      }
+
+      project.task("label", dependsOn: [ project.tasks.validateLabelSetup, ]) << {
+         project.convention.plugins.cedarLabel.labelMercurialRepositories()
       }
    }
 
