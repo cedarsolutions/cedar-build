@@ -28,6 +28,10 @@ import org.gradle.api.Project
 import org.gradle.api.InvalidUserDataException
 import java.io.File
 
+/** 
+ * Plugin extension for cedarPublish. 
+ * @author Kenneth J. Pronovici <pronovic@ieee.org>
+ */
 class CedarPublishPluginExtension {
 
    /** Project tied to this extension. */
@@ -39,7 +43,12 @@ class CedarPublishPluginExtension {
    }
 
    /** Path to the Mercurial-based Maven project that code will be published into. */
-   String mercurialMavenProject
+   def mercurialMavenProject
+
+   /** Get the project name, allowing for closure assignment. */
+   String getMercurialMavenProject() {
+      return mercurialMavenProject != null && mercurialMavenProject instanceof Callable ? mercurialMavenProject.call() : mercurialMavenProject
+   }  
 
    /** Whether digital signatures are required for the current publish actions. */
    def isSignatureRequired() {
@@ -54,18 +63,18 @@ class CedarPublishPluginExtension {
       if (!isMercurialRepositoryConfigured()) {
          return null;
       } else {
-         return "file://" + new File(mercurialMavenProject).canonicalPath.replace("\\", "/") + "/maven"
+         return "file://" + new File(getMercurialMavenProject()).canonicalPath.replace("\\", "/") + "/maven"
       }
    }
 
    /** Whether a valid Mercurial-based Maven repository is configured. */
    def isMercurialRepositoryConfigured() {
-      if (mercurialMavenProject == null || mercurialMavenProject == "unset") {
+      if (getMercurialMavenProject() == null || getMercurialMavenProject() == "unset") {
          return false
       } else {
-         if (!(new File(mercurialMavenProject).isDirectory()
-               && new File(mercurialMavenProject + "/.hg").isDirectory()
-               && new File(mercurialMavenProject + "/maven").isDirectory())) {
+         if (!(new File(getMercurialMavenProject()).isDirectory()
+               && new File(getMercurialMavenProject() + "/.hg").isDirectory()
+               && new File(getMercurialMavenProject() + "/maven").isDirectory())) {
             return false
          } else {
             return true
@@ -75,14 +84,14 @@ class CedarPublishPluginExtension {
 
    /** Validate the Mercurial-based Maven repository URL. */
    def validateMavenRepositoryConfig() {
-      if (mercurialMavenProject == null || mercurialMavenProject == "unset") {
+      if (getMercurialMavenProject() == null || getMercurialMavenProject() == "unset") {
          throw new InvalidUserDataException("Publish error: mercurialMavenProject is unset")
       } 
 
-      if (!(new File(mercurialMavenProject).isDirectory()
-               && new File(mercurialMavenProject + "/.hg").isDirectory()
-               && new File(mercurialMavenProject + "/maven").isDirectory())) {
-         throw new InvalidUserDataException("Publish error: not a Mercurial-based Maven repository: " + mercurialMavenProject)
+      if (!(new File(getMercurialMavenProject()).isDirectory()
+               && new File(getMercurialMavenProject() + "/.hg").isDirectory()
+               && new File(getMercurialMavenProject() + "/maven").isDirectory())) {
+         throw new InvalidUserDataException("Publish error: not a Mercurial-based Maven repository: " + getMercurialMavenProject())
       }
    }
 

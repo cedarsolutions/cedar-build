@@ -28,6 +28,10 @@ import org.gradle.api.Project
 import org.gradle.api.Plugin
 import org.gradle.api.Action
 
+/** 
+ * Plugin action for cedarProperties. 
+ * @author Kenneth J. Pronovici <pronovic@ieee.org>
+ */
 class CedarProperties implements Action<Plugin> {
 
    /** Project tied to this extension. */

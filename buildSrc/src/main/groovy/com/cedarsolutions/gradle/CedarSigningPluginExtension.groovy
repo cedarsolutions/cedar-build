@@ -28,6 +28,10 @@ import org.gradle.api.Project
 import org.gradle.api.InvalidUserDataException
 import java.io.File
 
+/** 
+ * Plugin extension for cedarSigning. 
+ * @author Kenneth J. Pronovici <pronovic@ieee.org>
+ */
 class CedarSigningPluginExtension {
 
    /** Project tied to this extension. */
@@ -39,12 +43,27 @@ class CedarSigningPluginExtension {
    }
 
    /** The id of the GPG key that will be used to sign code. */
-   String gpgKeyId
+   def gpgKeyId
 
    /** Path to the GPG secret key that will be used to sign code. */
-   String gpgSecretKey
+   def gpgSecretKey
    
    /** Projects that require configuration for digital signatures. */
    def projects
+
+   /** Get the GPG id, allowing for closure assignment. */
+   String getGpgKeyId() {
+      return gpgKeyId != null && gpgKeyId instanceof Callable ? gpgKeyId.call() : gpgKeyId
+   }  
+
+   /** Get the GPG secret key, allowing for closure assignment. */
+   String getGpgSecretKey() {
+      return gpgSecretKey != null && gpgSecretKey instanceof Callable ? gpgSecretKey.call() : gpgSecretKey
+   }  
+
+   /** Get the list of projects, allowing for closure assignment. */
+   List getGpgSecretKey() {
+      return projects != null && projects instanceof Callable ? projects.call() : projects
+   }  
 
 }

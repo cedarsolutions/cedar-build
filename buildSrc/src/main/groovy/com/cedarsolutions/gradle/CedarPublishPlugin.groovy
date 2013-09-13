@@ -29,9 +29,13 @@ import org.gradle.api.Plugin
 import org.gradle.api.plugins.MavenPlugin
 import org.gradle.plugins.signing.SigningPlugin
 
+/** 
+ * The cedarPublish plugin. 
+ * @author Kenneth J. Pronovici <pronovic@ieee.org>
+ */
 class CedarPublishPlugin implements Plugin<Project> {
 
-   @Override
+   /** Apply the plugin. */
    void apply(Project project) {
       project.plugins.apply(MavenPlugin)
       project.plugins.apply(SigningPlugin)

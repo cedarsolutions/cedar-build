@@ -32,6 +32,7 @@ import org.gradle.api.tasks.testing.TestResult
  * Test summary listener that prints out test results when tests are executed.
  * This makes the output legible in Eclipse; normally, the output isn't printed because Eclipse as a dumb terminal.
  * @see http://forums.gradle.org/gradle/topics/how_to_print_a_maven_like_test_summary_on_the_console
+ * @author Kenneth J. Pronovici <pronovic@ieee.org>
  */
 class TestSummary implements TestListener {
    long passed;

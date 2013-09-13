@@ -29,6 +29,10 @@ import groovy.swing.SwingBuilder
 import javax.swing.JFrame 
 import java.util.Properties
 
+/** 
+ * Plugin convention for cedarBuild. 
+ * @author Kenneth J. Pronovici <pronovic@ieee.org>
+ */
 class CedarBuildPluginConvention {
 
    /** Project tied to this convention. */

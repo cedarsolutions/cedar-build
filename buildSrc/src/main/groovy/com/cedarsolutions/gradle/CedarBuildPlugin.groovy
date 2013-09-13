@@ -27,9 +27,13 @@ package com.cedarsolutions.gradle
 import org.gradle.api.Project
 import org.gradle.api.Plugin
 
+/** 
+  * The cedarBuild plugin. 
+  * @author Kenneth J. Pronovici <pronovic@ieee.org>
+  */
 class CedarBuildPlugin implements Plugin<Project> {
 
-   @Override
+   /** Apply the plugin. */
    void apply(Project project) {
       project.extensions.cedarProperties = new CedarProperties(project)
       project.extensions.create("cedarSigning", CedarSigningPluginExtension, project)
@@ -40,6 +44,7 @@ class CedarBuildPlugin implements Plugin<Project> {
       project.convention.plugins.cedarLabel = new CedarLabelPluginConvention(project)
 
       project.gradle.addListener(new TestSummary())
+
       project.gradle.taskGraph.whenReady { 
          taskGraph -> project.convention.plugins.cedarSigning.applySignatureConfiguration(taskGraph) 
       }

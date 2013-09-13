@@ -28,13 +28,17 @@ import org.gradle.api.Project
 import org.gradle.plugins.signing.Sign
 import org.gradle.api.InvalidUserDataException
 
+/** 
+ * Plugin convention for cedarLabel. 
+ * @author Kenneth J. Pronovici <pronovic@ieee.org>
+ */
 class CedarLabelPluginConvention {
 
    /** The project tied to this convention. */
    private Project project;
 
    /** Create a convention tied to a project. */
-   CedarLabelPluginConvention(Project project) {
+   public CedarLabelPluginConvention(Project project) {
       this.project = project
    }
 

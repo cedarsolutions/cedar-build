@@ -28,6 +28,10 @@ import org.gradle.api.Project
 import org.gradle.api.InvalidUserDataException
 import java.util.concurrent.Callable
 
+/** 
+ * Plugin extension for cedarLabel. 
+ * @author Kenneth J. Pronovici <pronovic@ieee.org>
+ */
 class CedarLabelPluginExtension {
 
    /** Project tied to this extension. */
@@ -72,20 +76,16 @@ class CedarLabelPluginExtension {
 
    /** Validate the label configuration. */
    def validateLabelConfig() {
-      def projectName = project.cedarLabel.getProjectName()
-      def projectVersion = project.cedarLabel.getProjectVersion()
-      def repositories = project.cedarLabel.getRepositories()
-      def mercurialPath = project.cedarLabel.getMercurialPath()
-      if (repositories != null && !repositories.isEmpty()) {
-         if (projectName == null || projectName == "unset") {
+      if (getRepositories() != null && !getRepositories().isEmpty()) {
+         if (getProjectName() == null || getProjectName() == "unset") {
             throw new InvalidUserDataException("Label error: projectName is unset")
          }
 
-         if (projectVersion == null || projectVersion == "unset") {
+         if (getProjectVersion() == null || getProjectVersion() == "unset") {
             throw new InvalidUserDataException("Label error: projectVersion is unset")
          }
 
-         if (mercurialPath == null || mercurialPath == "unset") {
+         if (getMercurialPath() == null || getMercurialPath() == "unset") {
             throw new InvalidUserDataException("Label error: mercurialPath is unset")
          }
       }

@@ -28,13 +28,17 @@ import org.gradle.api.Project
 import org.gradle.plugins.signing.Sign
 import org.gradle.api.InvalidUserDataException
 
+/** 
+ * Plugin convention for cedarSigning. 
+ * @author Kenneth J. Pronovici <pronovic@ieee.org>
+ */
 class CedarSigningPluginConvention {
 
    /** The project tied to this convention. */
    private Project project;
 
    /** Create a convention tied to a project. */
-   CedarSigningPluginConvention(Project project) {
+   public CedarSigningPluginConvention(Project project) {
       this.project = project
    }
 
@@ -52,33 +56,33 @@ class CedarSigningPluginConvention {
 
    /** Get a GPG passphrase from the user, calling a closure with the result. */
    def getGpgPassphrase(action) {
-      String title = "GPG key " + project.cedarSigning.gpgKeyId;
-      String label = "Enter passphrase"
       validateGpgConfig()
+      String title = "GPG key " + project.cedarSigning.getGpgKeyId();
+      String label = "Enter passphrase"
       project.convention.plugins.cedarBuild.getInput(title, label, true, action)
    }
 
    /** Set signature configuration for all projects. */
    def setSignatureConfiguration(passphrase) {
       project.cedarSigning.projects.each { project ->
-         project.ext."signing.keyId" = project.cedarSigning.gpgKeyId 
-         project.ext."signing.secretKeyRingFile" = project.cedarSigning.gpgSecretKey
+         project.ext."signing.keyId" = project.cedarSigning.getGpgKeyId() 
+         project.ext."signing.secretKeyRingFile" = project.cedarSigning.getGpgSecretKey()
          project.ext."signing.password" = passphrase
       }
    }
 
    /** Validate the GPG configuration. */
    def validateGpgConfig() {
-      if (project.cedarSigning.gpgKeyId == null || project.cedarSigning.gpgKeyId == "unset") {
+      if (project.cedarSigning.getGpgKeyId() == null || project.cedarSigning.getGpgKeyId() == "unset") {
          throw new InvalidUserDataException("Publish error: gpgKeyId is unset")
       }
 
-      if (project.cedarSigning.gpgSecretKey == null || project.cedarSigning.gpgSecretKey == "unset") {
+      if (project.cedarSigning.getGpgSecretKey() == null || project.cedarSigning.getGpgSecretKey() == "unset") {
          throw new InvalidUserDataException("Publish error: gpgSecretKey is unset")
       }
 
-      if (!(new File(project.cedarSigning.gpgSecretKey).isFile())) {
-         throw new InvalidUserDataException("Publish error: GPG secret key not found: " + project.cedarSigning.gpgSecretKey)
+      if (!(new File(project.cedarSigning.getGpgSecretKey()).isFile())) {
+         throw new InvalidUserDataException("Publish error: GPG secret key not found: " + project.cedarSigning.getGpgSecretKey())
       }
    }
 
