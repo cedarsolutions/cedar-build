@@ -27,6 +27,7 @@ package com.cedarsolutions.gradle
 import org.gradle.api.Project 
 import org.gradle.api.InvalidUserDataException
 import java.io.File
+import java.util.concurrent.Callable
 
 /** 
  * Plugin extension for cedarSigning. 
