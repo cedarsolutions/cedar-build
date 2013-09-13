@@ -1,0 +1,105 @@
+// vim: set ft=groovy:
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+// *
+// *              C E D A R
+// *          S O L U T I O N S       "Software done right."
+// *           S O F T W A R E
+// *
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+// *
+// * Copyright (c) 2013 Kenneth J. Pronovici.
+// * All rights reserved.
+// *
+// * This program is free software; you can redistribute it and/or
+// * modify it under the terms of the Apache License, Version 2.0.
+// * See LICENSE for more information about the licensing terms.
+// *
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+// *
+// * Author   : Kenneth J. Pronovici <pronovic@ieee.org>
+// * Language : Gradle (>= 1.7)
+// * Project  : Common Dependencies
+// *
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+// http://stackoverflow.com/questions/1163173/why-use-gradle-instead-of-ant-or-maven
+
+apply plugin: "base"
+apply plugin: "groovy"
+apply plugin: "cedarBuild"
+apply plugin: "cedarPublish"
+
+cedarProperties.loadStandardProperties()
+
+group = "com.googlecode.cedar-common"
+def artifactId = "gradle-plugins"
+version = config_mavenPublishVersion
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+}
+
+cedarSigning {
+   gpgKeyId = config_gpgKeyId
+   gpgSecretKey = config_gpgSecretKey
+   projects = allprojects
+}
+
+jar {
+   from "buildSrc/build/classes/main"
+   from "buildSrc/build/resources/main"
+}
+
+artifacts {
+   archives jar
+}
+
+signing {
+   required = { cedarPublish.isSignatureRequired() }
+   sign jar
+}
+
+cedarPublish {
+   mercurialMavenProject = config_mercurialMavenProject
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: cedarPublish.getPublishRepositoryUrl())
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+            pom.artifactId = artifactId
+            pom.project {
+               name "Cedar Common Gradle Plugins"
+               description "Gradle plugins, for use with a standardized build process."
+               url "https://code.google.com/p/cedar-common/"
+               scm {
+                  url "scm:hg:https://code.google.com/p/cedar-common.gradle/"
+                  connection "scm:hg:https://code.google.com/p/cedar-common.gradle/"
+                  developerConnection "scm:hg:https://code.google.com/p/cedar-common.gradle/"
+               }
+               licenses {
+                  license {
+                     name "The Apache Software License, Version 2.0"
+                     url "http://www.apache.org/license/LICENSE-2.0.txt"
+                     distribution "repo"
+                  }
+               }
+               developers {
+                  developer {
+                     id "pronovic"
+                     name "Kenneth J. Pronovici"
+                     email "pronovic@ieee.org"
+                  }
+               }
+            }
+        }
+    }
+}
+
+install {
+   repositories.mavenInstaller {
+      pom.artifactId = artifactId
+   }
+}
+

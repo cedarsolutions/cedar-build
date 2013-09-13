@@ -1,0 +1,12 @@
+This is the Cedar Common Gradle project, which provides Gradle plugins for use
+in a standardized build process.  The home page for Cedar Common is:
+
+    http://code.google.com/p/cedar-common/  
+
+This plugin is available in a Maven repository at:
+
+    http://maven.cedar-common.googlecode.com/hg/maven
+
+---
+
+Gradle: http://www.gradle.org/
