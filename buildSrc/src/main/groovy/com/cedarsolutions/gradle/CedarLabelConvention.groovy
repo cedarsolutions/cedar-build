@@ -55,11 +55,11 @@ class CedarLabelPluginConvention {
          project.logger.lifecycle("CedarBuild label tool: applying ${label}")
          repositories.each { repository ->
             project.logger.lifecycle(" --> ${repository}")
-            //project.ant.exec(executable: mercurialPath, dir: repository) {
-               //arg(value: "tag")
-               //arg(value: "-f")
-               //arg(value: label)
-            //}
+            project.ant.exec(executable: mercurialPath, dir: repository) {
+               arg(value: "tag")
+               arg(value: "-f")
+               arg(value: label)
+            }
          }
       }
    }
