@@ -18,7 +18,7 @@
 // *
 // * Author   : Kenneth J. Pronovici <pronovic@ieee.org>
 // * Language : Gradle (>= 1.7)
-// * Project  : Common Dependencies
+// * Project  : Common Build Functionality
 // *
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 // http://stackoverflow.com/questions/1163173/why-use-gradle-instead-of-ant-or-maven
