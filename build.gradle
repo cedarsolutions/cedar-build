@@ -53,6 +53,8 @@ group = "com.googlecode.cedar-common"
 def artifactId = "cedar-build"
 version = config_mavenPublishVersion
 
+tasks.publish.dependsOn += [ label, ] 
+
 dependencies {
    compile gradleApi()
    compile localGroovy()
