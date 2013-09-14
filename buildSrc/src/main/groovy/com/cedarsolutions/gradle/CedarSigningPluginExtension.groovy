@@ -63,7 +63,7 @@ class CedarSigningPluginExtension {
    }  
 
    /** Get the list of projects, allowing for closure assignment. */
-   List getProjects() {
+   def getProjects() {
       return projects != null && projects instanceof Callable ? projects.call() : projects
    }  
 

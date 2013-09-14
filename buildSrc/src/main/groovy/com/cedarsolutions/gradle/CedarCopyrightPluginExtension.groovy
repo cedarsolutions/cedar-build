@@ -60,12 +60,12 @@ class CedarCopyrightPluginExtension {
    }  
 
    /** Get the source patterns, allowing for closure assignment. */
-   List getSourcePatterns() {
+   def getSourcePatterns() {
       return sourcePatterns != null && sourcePatterns instanceof Callable ? sourcePatterns.call() : sourcePatterns
    }  
 
    /** Get the repositories list, allowing for closure assignment. */
-   List getRepositories() {
+   def getRepositories() {
       return repositories != null && repositories instanceof Callable ? repositories.call() : repositories
    }
 

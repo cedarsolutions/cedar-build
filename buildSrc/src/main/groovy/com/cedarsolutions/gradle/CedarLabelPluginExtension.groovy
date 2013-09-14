@@ -65,7 +65,7 @@ class CedarLabelPluginExtension {
    }  
 
    /** Get the repositories list, allowing for closure assignment. */
-   List getRepositories() {
+   def getRepositories() {
       return repositories != null && repositories instanceof Callable ? repositories.call() : repositories
    }  
 
