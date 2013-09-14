@@ -1,4 +1,4 @@
-Version 0.8.4   unreleased
+Version 0.8.4   14 Sep 2013
 
    * Add GWT constants parser in CedarProperties
    * Add a copyJavadocToMercurial() method 
