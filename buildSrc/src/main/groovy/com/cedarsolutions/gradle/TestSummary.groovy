@@ -47,7 +47,7 @@ class TestSummary implements TestListener {
 
    public void afterSuite(TestDescriptor suite, TestResult result) {
       // On Windows, we get one result called "Test Run".  On Linux, there are several results, and "Test Run" is one of them.
-      if (suite.getName() == "Test Run") {
+      if (suite.getName() == "Test Run" && this.getTotal() > 0) {
          System.out.printf("*** Test results: passed=%d, failed=%d, skipped=%d\n", passed, failed, skipped);
       }
    }
@@ -59,6 +59,10 @@ class TestSummary implements TestListener {
       passed += result.getSuccessfulTestCount();
       failed += result.getFailedTestCount();
       skipped += result.getSkippedTestCount();
+   }
+
+   public int getTotal() {
+      return this.passed + this.failed + this.skipped;
    }
 }
 
