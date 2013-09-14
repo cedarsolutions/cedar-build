@@ -93,6 +93,7 @@ class CedarJavadocPluginConvention {
          out.writeLine("-classpath '" + classpath.asPath.replace("\\", "\\\\") + "'")
          out.writeLine("-d '" + output.replace("\\", "\\\\") + "'")
          out.writeLine("-quiet")
+         out.writeLine("-notimestamp")
          out.writeLine("-doctitle '${title}'")
          out.writeLine("-windowtitle '${title}'")
          out.writeLine("-sourcepath '" + srcDirs.join(";").replace("\\", "\\\\") + "'")
