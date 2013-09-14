@@ -64,7 +64,7 @@ class CedarSigningPluginConvention {
 
    /** Set signature configuration for all projects. */
    def setSignatureConfiguration(passphrase) {
-      project.cedarSigning.projects.each { project ->
+      project.cedarSigning.getProjects().each { project ->
          project.ext."signing.keyId" = project.cedarSigning.getGpgKeyId() 
          project.ext."signing.secretKeyRingFile" = project.cedarSigning.getGpgSecretKey()
          project.ext."signing.password" = passphrase
