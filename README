@@ -1,5 +1,6 @@
-This is the Cedar Common Gradle project, which provides Gradle plugins for use
-in a standardized build process.  The home page for Cedar Common is:
+This is the Cedar Build project, which provides Gradle plugins and other
+functionality for use in a standardized build process.  The home page for Cedar
+Common is:
 
     http://code.google.com/p/cedar-common/  
 

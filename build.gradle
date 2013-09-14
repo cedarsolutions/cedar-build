@@ -42,6 +42,13 @@ cedarProperties.loadStandardProperties()
 // * Project configuration
 // ************************
 
+// Note: I'm doing something a little goofy here.  This project creates the
+// gradle plugin that's published to Maven.  However, I also want to *use* that
+// functionality to do the build (particularly the jar signing stuff).  So, I'm
+// kind of bootstrapping the plugin with itself.  The plugin lives in the
+// Gradle buildSrc directory so it can be used by this script, but then the
+// buildSrc artifacts are used to create the published jar file.
+
 group = "com.googlecode.cedar-common"
 def artifactId = "cedar-build"
 version = config_mavenPublishVersion
@@ -96,11 +103,11 @@ uploadArchives {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
             pom.artifactId = artifactId
             pom.project {
-               name "Cedar Common Build Functionality"
-               description "Gradle plugins, for use with a standardized build process."
+               name "Cedar Build Functionality"
+               description "Gradle plugins and other functionality for use with a standardized build process."
                url "https://code.google.com/p/cedar-common/"
                scm {
-                  url "scm:hg:https://code.google.com/p/cedar-common.gradle/"
+                  url "scm:hg:https://code.google.com/p/cedar-common.build/"
                   connection "scm:hg:https://code.google.com/p/cedar-common.build/"
                   developerConnection "scm:hg:https://code.google.com/p/cedar-common.build/"
                }
@@ -134,7 +141,7 @@ install {
 // * General build tasks
 // **********************
 
-// Generate XML bindings for the Mercurial XML output
+// Generate XML bindings for the Mercurial XML output (used by the copyright tool)
 task generateHgBindings << {
    def resourcesDir = "gradle/resources"
    def generatedDir = "buildSrc/src/main/java"
