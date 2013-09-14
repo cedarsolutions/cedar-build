@@ -78,14 +78,16 @@ class CedarJavadocPluginConvention {
    /** Generate a Javadoc options file on disk. */
    private void generateOptionsFile(optionsFile, classpath, title, srcDirs, subpackages, output) {
 
-      // The reason this is even necessary is because GWT jars include source code,
-      // and the Java 7 Javadoc compiler gets utterly confused by this.  The only
-      // workaround I've found is to specify a source path and subpackages, because
-      // then it apparently ignores the source in the jars.  However, this workaround
-      // is kind of ugly.  The command-line you see below has been tested on Windows,
-      // but I'm not sure whether it will work on UNIX or whether the path separator
-      // will need to change.  The stupid Oracle documentation for Javadoc says that
-      // the separator is always colon (":"), but that clearly doesn't work.
+      // The reason this is even necessary is because GWT jars include source
+      // code, and the Java 7 Javadoc compiler gets utterly confused by this.
+      // The only workaround I've found is to specify a source path and
+      // subpackages, because then it apparently ignores the source in the
+      // jars.  However, this workaround is kind of ugly.  The command-line you
+      // see below has been tested on Windows, but I'm not sure whether it will
+      // work on UNIX or whether the path separator will need to change.  The
+      // stupid Oracle documentation for Javadoc says that the separator is
+      // always colon (":"), but that clearly doesn't work for sourcepath
+      // (although it does seem to be correct for subpackages).
 
       new File(optionsFile).withWriter { out ->
          out.writeLine("-classpath '" + classpath.asPath.replace("\\", "\\\\") + "'")
