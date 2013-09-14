@@ -79,4 +79,47 @@ class CedarProperties implements Action<Plugin> {
       project.logger.lifecycle("CedarBuild properties loader: added ${added} project.ext properties from: " + files)
    }
 
+   /**
+    * Load properties from a GWT Constants file.
+    * This supports fields annotated with \@DefaultStringValue, \@DefaultIntValue, and \@DefaultBooleanValue.
+    * @param file    Path to the GWT constants class on disk
+    * @param names   List of property names to be pulled into the project namespace
+    */
+   def loadGwtProperties(file, names) {
+      project.logger.info("Cedar Build GWT properties loader: loading GWT properties")
+
+      def added = 0
+      names.each { name ->
+         def regex
+         def matcher
+         def contents = new File(file).getText()
+
+         regex = ~/(?s)(@DefaultStringValue[(]["])([^"]*)(["])([)])(\s*)(String\s+)(${name})([(][)];)/
+         matcher = regex.matcher(contents)
+         while (matcher.find()) {
+            project.ext[matcher.group(7)] = matcher.group(2)
+            project.logger.info("Set project.ext[" + matcher.group(7) + "] to [" + matcher.group(2) + "]")
+            added += 1
+         }
+
+         regex = ~/(?s)(@DefaultIntValue[(])([.0-9]*)([)])(\s*)((int|Integer)\s+)(${name})([(][)];)/
+         matcher = regex.matcher(contents)
+         while (matcher.find()) {
+            project.ext[matcher.group(7)] = Integer.parseInt(matcher.group(2))
+            project.logger.info("Set project.ext[" + matcher.group(7) + "] to [" + matcher.group(2) + "]")
+            added += 1
+         }
+
+         regex = ~/(?s)(@DefaultBooleanValue[(])(true|false)([)])(\s*)((boolean|Boolean)\s+)(${name})([(][)];)/
+         matcher = regex.matcher(contents)
+         while (matcher.find()) {
+            project.ext[matcher.group(7)] = matcher.group(2) == "true" ? true : false
+            project.logger.info("Set project.ext[" + matcher.group(7) + "] to [" + matcher.group(2) + "]")
+            added += 1
+         }
+      }
+
+      project.logger.lifecycle("CedarBuild GWT properties loader: added ${added} project.ext properties from: " + project.file(file).name)
+   }
+
 }

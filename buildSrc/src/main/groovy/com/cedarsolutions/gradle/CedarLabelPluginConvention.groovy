@@ -67,7 +67,8 @@ class CedarLabelPluginConvention {
    /** Generate a standard label based on name and version. */
    def generateLabel(String projectName, String projectVersion) {
       def timestamp = new Date().format("yyyyMMddHHmmssSSS", TimeZone.getTimeZone("UTC"))
-      return "${projectName}__v${projectVersion}__${timestamp}"
+      def label = "${projectName}__v${projectVersion}__${timestamp}"
+      return label.replace(":", "").replace(" ", "_") // Mercurial doesn't allow colon or space in tag name
    }
 
 }
