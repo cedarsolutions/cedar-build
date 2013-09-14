@@ -43,6 +43,32 @@ class CedarBuildPluginConvention {
       this.project = project;
    }
 
+   /**
+    * Copy Javadoc from a set of projects to a Mercurial project for publishing.
+    * @param mercurialJavadocProject  Mercurial project to hold the Javadoco
+    * @param projects                 List of projects whose Javadoc to copy
+    * @param transform                Transform to use when generating the target directory from the project name
+    */
+   def copyJavadocToMercurial(mercurialJavadocProject, projects, transform) {
+      if (mercurialJavadocProject != null && mercurialJavadocProject != "unset") {
+         if (project.file(mercurialJavadocProject).isDirectory()) {
+            def baseDir = project.file(mercurialJavadocProject)
+            projects.each { item ->
+               def sourceDir = project.file(item.docsDir.canonicalPath + "/javadoc")
+               def index = project.file(sourceDir.canonicalPath + "/index.html")
+               def targetDir = project.file(baseDir.canonicalPath + "/" + transform.call(item.name))
+               if (index.isFile()) {
+                  targetDir.deleteDir()
+                  targetDir.mkdirs()
+                  project.ant.copy(todir: targetDir) {
+                     fileset(dir: sourceDir, includes: "**/*")
+                  }
+               }
+            }
+         }
+      }
+   }
+
    /** 
     * Configure Eclipse to ignore resources in a set of directories.
     * This adds a new stanza at the bottom of the Eclipse .project file.
