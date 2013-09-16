@@ -1,4 +1,4 @@
-Version 0.8.5   unreleased
+Version 0.8.5   16 Sep 2013
 
     * Add "enabled" flag onto cedarLabel, so it's easier to turn off.
 
