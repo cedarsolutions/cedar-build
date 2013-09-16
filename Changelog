@@ -1,3 +1,7 @@
+Version 0.8.5   unreleased
+
+    * Add "enabled" flag onto cedarLabel, so it's easier to turn off.
+
 Version 0.8.4   14 Sep 2013
 
    * Add GWT constants parser in CedarProperties

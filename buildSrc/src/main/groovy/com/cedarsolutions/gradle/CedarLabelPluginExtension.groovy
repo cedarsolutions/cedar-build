@@ -42,6 +42,9 @@ class CedarLabelPluginExtension {
       this.project = project;
    }
 
+   /** Whether label generation is enabled. */
+   def enabled
+
    /** The name of the project that the label is tied to. */
    def projectName
 
@@ -53,6 +56,19 @@ class CedarLabelPluginExtension {
 
    /** Path to the Mercurial exectuable. */
    def mercurialPath
+
+   /** Get the enabled flag, allowing for a default (null=true) and closure assignment. */
+   boolean isEnabled() {
+      if (enabled != null) {
+         if (enabled instanceof Callable) {
+            return enabled.call() == "true" ? true : false
+         } else {
+            return enabled == "true" ? true : false
+         }
+      } else {
+         return true
+      }
+   }
 
    /** Get the project name, allowing for closure assignment. */
    String getProjectName() {
@@ -76,17 +92,19 @@ class CedarLabelPluginExtension {
 
    /** Validate the label configuration. */
    def validateLabelConfig() {
-      if (getRepositories() != null && !getRepositories().isEmpty()) {
-         if (getProjectName() == null || getProjectName() == "unset") {
-            throw new InvalidUserDataException("Label error: projectName is unset")
-         }
+      if (getEnabled()) {
+         if (getRepositories() != null && !getRepositories().isEmpty()) {
+            if (getProjectName() == null || getProjectName() == "unset") {
+               throw new InvalidUserDataException("Label error: projectName is unset")
+            }
 
-         if (getProjectVersion() == null || getProjectVersion() == "unset") {
-            throw new InvalidUserDataException("Label error: projectVersion is unset")
-         }
+            if (getProjectVersion() == null || getProjectVersion() == "unset") {
+               throw new InvalidUserDataException("Label error: projectVersion is unset")
+            }
 
-         if (getMercurialPath() == null || getMercurialPath() == "unset") {
-            throw new InvalidUserDataException("Label error: mercurialPath is unset")
+            if (getMercurialPath() == null || getMercurialPath() == "unset") {
+               throw new InvalidUserDataException("Label error: mercurialPath is unset")
+            }
          }
       }
    }

@@ -44,21 +44,26 @@ class CedarLabelPluginConvention {
 
    /** Label Mercurial repositories per configuration. */
    def labelMercurialRepositories() {
-      def projectName = project.cedarLabel.getProjectName()
-      def projectVersion = project.cedarLabel.getProjectVersion()
-      def repositories = project.cedarLabel.getRepositories()
-      def mercurialPath = project.cedarLabel.getMercurialPath()
-      if (repositories == null || repositories.isEmpty()) {
-         project.logger.lifecycle("CedarBuild label tool: no Mercurial repositories to label")
+      def enabled = project.cedarLabel.isEnabled()
+      if (!enabled) {
+         project.logger.lifecycle("CedarBuild label tool: labeling is disabled")
       } else {
-         def label = generateLabel(projectName, projectVersion)
-         project.logger.lifecycle("CedarBuild label tool: applying ${label}")
-         repositories.each { repository ->
-            project.logger.lifecycle(" --> ${repository}")
-            project.ant.exec(executable: mercurialPath, dir: repository, failonerror: "true") {
-               arg(value: "tag")
-               arg(value: "-f")
-               arg(value: label)
+         def projectName = project.cedarLabel.getProjectName()
+         def projectVersion = project.cedarLabel.getProjectVersion()
+         def repositories = project.cedarLabel.getRepositories()
+         def mercurialPath = project.cedarLabel.getMercurialPath()
+         if (repositories == null || repositories.isEmpty()) {
+            project.logger.lifecycle("CedarBuild label tool: no Mercurial repositories to label")
+         } else {
+            def label = generateLabel(projectName, projectVersion)
+            project.logger.lifecycle("CedarBuild label tool: applying ${label}")
+            repositories.each { repository ->
+               project.logger.lifecycle(" --> ${repository}")
+               project.ant.exec(executable: mercurialPath, dir: repository, failonerror: "true") {
+                  arg(value: "tag")
+                  arg(value: "-f")
+                  arg(value: label)
+               }
             }
          }
       }
