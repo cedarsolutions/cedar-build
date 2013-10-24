@@ -1,4 +1,4 @@
-// vim: set ft=groovy ts=3:
+// vim: set ft=groovy ts=4 sw=4:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // *
 // *              C E D A R
@@ -35,19 +35,19 @@ import org.gradle.plugins.signing.SigningPlugin
  */
 class CedarPublishPlugin implements Plugin<Project> {
 
-   /** Apply the plugin. */
-   void apply(Project project) {
-      project.plugins.apply(MavenPlugin)
-      project.plugins.apply(SigningPlugin)
+    /** Apply the plugin. */
+    void apply(Project project) {
+        project.plugins.apply(MavenPlugin)
+        project.plugins.apply(SigningPlugin)
 
-      project.extensions.create("cedarPublish", CedarPublishPluginExtension, project)
+        project.extensions.create("cedarPublish", CedarPublishPluginExtension, project)
 
-      project.task("validatePublishSetup") << {
-         project.cedarPublish.validateMavenRepositoryConfig()
-      }
+        project.task("validatePublishSetup") << {
+            project.cedarPublish.validateMavenRepositoryConfig()
+        }
 
-      project.task("publish", dependsOn: [ project.tasks.validatePublishSetup, project.tasks.uploadArchives, ])
-      project.tasks.uploadArchives.mustRunAfter project.tasks.validatePublishSetup
-   }
+        project.task("publish", dependsOn: [ project.tasks.validatePublishSetup, project.tasks.uploadArchives, ])
+        project.tasks.uploadArchives.mustRunAfter project.tasks.validatePublishSetup
+    }
 
 }

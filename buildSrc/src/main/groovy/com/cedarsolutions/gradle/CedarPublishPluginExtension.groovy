@@ -1,4 +1,4 @@
-// vim: set ft=groovy ts=3:
+// vim: set ft=groovy ts=4 sw=4:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // *
 // *              C E D A R
@@ -35,65 +35,65 @@ import java.util.concurrent.Callable
  */
 class CedarPublishPluginExtension {
 
-   /** Project tied to this extension. */
-   private Project project;
+    /** Project tied to this extension. */
+    private Project project;
 
-   /** Create an extension for a project. */
-   public CedarPublishPluginExtension(Project project) {
-      this.project = project;
-   }
+    /** Create an extension for a project. */
+    public CedarPublishPluginExtension(Project project) {
+        this.project = project;
+    }
 
-   /** Path to the Mercurial-based Maven project that code will be published into. */
-   def mercurialMavenProject
+    /** Path to the Mercurial-based Maven project that code will be published into. */
+    def mercurialMavenProject
 
-   /** Get the project name, allowing for closure assignment. */
-   String getMercurialMavenProject() {
-      return mercurialMavenProject != null && mercurialMavenProject instanceof Callable ? mercurialMavenProject.call() : mercurialMavenProject
-   }  
+    /** Get the project name, allowing for closure assignment. */
+    String getMercurialMavenProject() {
+        return mercurialMavenProject != null && mercurialMavenProject instanceof Callable ? mercurialMavenProject.call() : mercurialMavenProject
+    }  
 
-   /** Whether digital signatures are required for the current publish actions. */
-   def isSignatureRequired() {
-      // Gradle's behavior varies depending on whether there are subprojects.
-      return project.cedarPublish.isMercurialRepositoryConfigured() &&
-             (project.gradle.taskGraph.hasTask(":uploadArchives") || 
-              project.gradle.taskGraph.hasTask(":${project.name}:uploadArchives"));
-   }
+    /** Whether digital signatures are required for the current publish actions. */
+    def isSignatureRequired() {
+        // Gradle's behavior varies depending on whether there are subprojects.
+        return project.cedarPublish.isMercurialRepositoryConfigured() &&
+               (project.gradle.taskGraph.hasTask(":uploadArchives") || 
+               project.gradle.taskGraph.hasTask(":${project.name}:uploadArchives"));
+    }
 
-   /** Get the proper Mercurial-based Maven repository URL. */
-   def getPublishRepositoryUrl() {
-      if (!isMercurialRepositoryConfigured()) {
-         return null;
-      } else {
-         return "file://" + new File(getMercurialMavenProject()).canonicalPath.replace("\\", "/") + "/maven"
-      }
-   }
+    /** Get the proper Mercurial-based Maven repository URL. */
+    def getPublishRepositoryUrl() {
+        if (!isMercurialRepositoryConfigured()) {
+             return null;
+        } else {
+             return "file://" + new File(getMercurialMavenProject()).canonicalPath.replace("\\", "/") + "/maven"
+        }
+    }
 
-   /** Whether a valid Mercurial-based Maven repository is configured. */
-   def isMercurialRepositoryConfigured() {
-      if (getMercurialMavenProject() == null || getMercurialMavenProject() == "unset") {
-         return false
-      } else {
-         if (!(new File(getMercurialMavenProject()).isDirectory()
-               && new File(getMercurialMavenProject() + "/.hg").isDirectory()
-               && new File(getMercurialMavenProject() + "/maven").isDirectory())) {
+    /** Whether a valid Mercurial-based Maven repository is configured. */
+    def isMercurialRepositoryConfigured() {
+        if (getMercurialMavenProject() == null || getMercurialMavenProject() == "unset") {
             return false
-         } else {
-            return true
-         }
-      }
-   }
-
-   /** Validate the Mercurial-based Maven repository URL. */
-   def validateMavenRepositoryConfig() {
-      if (getMercurialMavenProject() == null || getMercurialMavenProject() == "unset") {
-         throw new InvalidUserDataException("Publish error: mercurialMavenProject is unset")
-      } 
-
-      if (!(new File(getMercurialMavenProject()).isDirectory()
+        } else {
+            if (!(new File(getMercurialMavenProject()).isDirectory()
                && new File(getMercurialMavenProject() + "/.hg").isDirectory()
                && new File(getMercurialMavenProject() + "/maven").isDirectory())) {
-         throw new InvalidUserDataException("Publish error: not a Mercurial-based Maven repository: " + getMercurialMavenProject())
-      }
-   }
+                return false
+            } else {
+                return true
+            }
+        }
+    }
+
+    /** Validate the Mercurial-based Maven repository URL. */
+    def validateMavenRepositoryConfig() {
+        if (getMercurialMavenProject() == null || getMercurialMavenProject() == "unset") {
+            throw new InvalidUserDataException("Publish error: mercurialMavenProject is unset")
+        } 
+
+        if (!(new File(getMercurialMavenProject()).isDirectory()
+           && new File(getMercurialMavenProject() + "/.hg").isDirectory()
+           && new File(getMercurialMavenProject() + "/maven").isDirectory())) {
+            throw new InvalidUserDataException("Publish error: not a Mercurial-based Maven repository: " + getMercurialMavenProject())
+        }
+    }
 
 }

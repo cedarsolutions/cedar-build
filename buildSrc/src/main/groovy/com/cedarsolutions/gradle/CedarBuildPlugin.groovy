@@ -1,4 +1,4 @@
-// vim: set ft=groovy ts=3:
+// vim: set ft=groovy ts=4 sw=4:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // *
 // *              C E D A R
@@ -33,29 +33,29 @@ import org.gradle.api.Plugin
   */
 class CedarBuildPlugin implements Plugin<Project> {
 
-   /** Apply the plugin. */
-   void apply(Project project) {
-      project.extensions.cedarProperties = new CedarProperties(project)
-      project.extensions.create("cedarSigning", CedarSigningPluginExtension, project)
-      project.extensions.create("cedarLabel", CedarLabelPluginExtension, project)
+    /** Apply the plugin. */
+    void apply(Project project) {
+        project.extensions.cedarProperties = new CedarProperties(project)
+        project.extensions.create("cedarSigning", CedarSigningPluginExtension, project)
+        project.extensions.create("cedarLabel", CedarLabelPluginExtension, project)
 
-      project.convention.plugins.cedarBuild = new CedarBuildPluginConvention(project)
-      project.convention.plugins.cedarSigning = new CedarSigningPluginConvention(project)
-      project.convention.plugins.cedarLabel = new CedarLabelPluginConvention(project)
+        project.convention.plugins.cedarBuild = new CedarBuildPluginConvention(project)
+        project.convention.plugins.cedarSigning = new CedarSigningPluginConvention(project)
+        project.convention.plugins.cedarLabel = new CedarLabelPluginConvention(project)
 
-      project.gradle.addListener(new TestSummary())
+        project.gradle.addListener(new TestSummary())
 
-      project.gradle.taskGraph.whenReady { 
-         taskGraph -> project.convention.plugins.cedarSigning.applySignatureConfiguration(taskGraph) 
-      }
+        project.gradle.taskGraph.whenReady { 
+            taskGraph -> project.convention.plugins.cedarSigning.applySignatureConfiguration(taskGraph) 
+        }
 
-      project.task("validateLabelSetup") << {
-         project.cedarLabel.validateLabelConfig()
-      }
+        project.task("validateLabelSetup") << {
+            project.cedarLabel.validateLabelConfig()
+        }
 
-      project.task("label", dependsOn: [ project.tasks.validateLabelSetup, ]) << {
-         project.convention.plugins.cedarLabel.labelMercurialRepositories()
-      }
-   }
+        project.task("label", dependsOn: [ project.tasks.validateLabelSetup, ]) << {
+            project.convention.plugins.cedarLabel.labelMercurialRepositories()
+        }
+    }
 
 }

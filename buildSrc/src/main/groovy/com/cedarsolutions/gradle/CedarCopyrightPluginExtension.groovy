@@ -1,4 +1,4 @@
-// vim: set ft=groovy ts=3:
+// vim: set ft=groovy ts=4 sw=4:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // *
 // *              C E D A R
@@ -34,62 +34,62 @@ import java.util.concurrent.Callable
  */
 class CedarCopyrightPluginExtension {
 
-   /** Project tied to this extension. */
-   private Project project;
+    /** Project tied to this extension. */
+    private Project project;
 
-   /** Create an extension for a project. */
-   public CedarCopyrightPluginExtension(Project project) {
-      this.project = project;
-   }
+    /** Create an extension for a project. */
+    public CedarCopyrightPluginExtension(Project project) {
+        this.project = project;
+    }
 
-   /** Regex pattern used to identify license files. */
-   def licensePattern;
+    /** Regex pattern used to identify license files. */
+    def licensePattern;
 
-   /** List of regex patterns used to identify source files. */
-   def sourcePatterns;
+    /** List of regex patterns used to identify source files. */
+    def sourcePatterns;
 
-   /** List of Mercurial directories that should be labeled. */
-   def repositories 
+    /** List of Mercurial directories that should be labeled. */
+    def repositories 
 
-   /** Path to the Mercurial exectuable. */
-   def mercurialPath
-   
-   /** Get the license patterns, allowing for closure assignment. */
-   String getLicensePattern() {
-      return licensePattern != null && licensePattern instanceof Callable ? licensePattern.call() : licensePattern
-   }  
+    /** Path to the Mercurial exectuable. */
+    def mercurialPath
 
-   /** Get the source patterns, allowing for closure assignment. */
-   def getSourcePatterns() {
-      return sourcePatterns != null && sourcePatterns instanceof Callable ? sourcePatterns.call() : sourcePatterns
-   }  
+    /** Get the license patterns, allowing for closure assignment. */
+    String getLicensePattern() {
+        return licensePattern != null && licensePattern instanceof Callable ? licensePattern.call() : licensePattern
+    }  
 
-   /** Get the repositories list, allowing for closure assignment. */
-   def getRepositories() {
-      return repositories != null && repositories instanceof Callable ? repositories.call() : repositories
-   }
+    /** Get the source patterns, allowing for closure assignment. */
+    def getSourcePatterns() {
+        return sourcePatterns != null && sourcePatterns instanceof Callable ? sourcePatterns.call() : sourcePatterns
+    }  
 
-   /** Get the Mercurial path, allowing for closure assignment. */
-   String getMercurialPath() {
-      return mercurialPath != null && mercurialPath instanceof Callable ? mercurialPath.call() : mercurialPath
-   } 
+    /** Get the repositories list, allowing for closure assignment. */
+    def getRepositories() {
+        return repositories != null && repositories instanceof Callable ? repositories.call() : repositories
+    }
 
-   /** Validate the copyright configuration. */
-   def validateCopyrightConfig() {
-      if (getRepositories() != null && !getRepositories().isEmpty()) { 
-         if (getLicensePattern() == null || getLicensePattern() == "unset") {
-            throw new InvalidUserDataException("Copyright error: licensePattern is unset")
-         }
+    /** Get the Mercurial path, allowing for closure assignment. */
+    String getMercurialPath() {
+        return mercurialPath != null && mercurialPath instanceof Callable ? mercurialPath.call() : mercurialPath
+    } 
 
-         if (getSourcePatterns() == null || getSourcePatterns().isEmpty()) {
-            throw new InvalidUserDataException("Copyright error: sourcePatterns is unset")
-         }
+    /** Validate the copyright configuration. */
+    def validateCopyrightConfig() {
+        if (getRepositories() != null && !getRepositories().isEmpty()) { 
+            if (getLicensePattern() == null || getLicensePattern() == "unset") {
+                throw new InvalidUserDataException("Copyright error: licensePattern is unset")
+            }
 
-         if (getMercurialPath() == null || getMercurialPath() == "unset") {
-            throw new InvalidUserDataException("Copyright error: mercurialPath is unset")
-         } 
-      }
-   }
+            if (getSourcePatterns() == null || getSourcePatterns().isEmpty()) {
+                throw new InvalidUserDataException("Copyright error: sourcePatterns is unset")
+            }
+
+            if (getMercurialPath() == null || getMercurialPath() == "unset") {
+                throw new InvalidUserDataException("Copyright error: mercurialPath is unset")
+            } 
+        }
+    }
 
 }
 

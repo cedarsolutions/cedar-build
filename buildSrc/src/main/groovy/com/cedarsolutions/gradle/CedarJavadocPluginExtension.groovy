@@ -1,4 +1,4 @@
-// vim: set ft=groovy ts=3:
+// vim: set ft=groovy ts=4 sw=4:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // *
 // *              C E D A R
@@ -35,71 +35,71 @@ import java.util.concurrent.Callable
  */
 class CedarJavadocPluginExtension {
 
-   /** Project tied to this extension. */
-   private Project project;
+    /** Project tied to this extension. */
+    private Project project;
 
-   /** Create an extension for a project. */
-   public CedarJavadocPluginExtension(Project project) {
-      this.project = project;
-   }
+    /** Create an extension for a project. */
+    public CedarJavadocPluginExtension(Project project) {
+        this.project = project;
+    }
 
-   /** Classpath to be used with the Javadoc command. */
-   def classpath
+    /** Classpath to be used with the Javadoc command. */
+    def classpath
 
-   /** Title to be used for both windowtitle and doctitle. */
-   def title
+    /** Title to be used for both windowtitle and doctitle. */
+    def title
 
-   /** Source directories to scan for classes. */
-   def srcDirs
+    /** Source directories to scan for classes. */
+    def srcDirs
 
-   /** List of subpackages for which to generate Javadoc, often just [ "com", ]. */
-   def subpackages
+    /** List of subpackages for which to generate Javadoc, often just [ "com", ]. */
+    def subpackages
 
-   /** Directory that output should be written to. */
-   def output
+    /** Directory that output should be written to. */
+    def output
 
-   /** Get the classpath, accounting for closures. */
-   def getClasspath() {
-      return classpath != null && classpath instanceof Callable ? classpath.call() : classpath
-   }  
+    /** Get the classpath, accounting for closures. */
+    def getClasspath() {
+        return classpath != null && classpath instanceof Callable ? classpath.call() : classpath
+    }  
 
-   /** Get the title, accounting for closures. */
-   String getTitle() {
-      return title != null && title instanceof Callable ? title.call() : title
-   }  
+    /** Get the title, accounting for closures. */
+    String getTitle() {
+        return title != null && title instanceof Callable ? title.call() : title
+    }  
 
-   /** Get the subpackages, accounting for closures. */
-   def getSubpackages() {
-      return subpackages != null && subpackages instanceof Callable ? subpackages.call() : subpackages
-   }  
+    /** Get the subpackages, accounting for closures. */
+    def getSubpackages() {
+        return subpackages != null && subpackages instanceof Callable ? subpackages.call() : subpackages
+    }  
 
-   /** Get the source directories, accounting for closures. */
-   def getSrcDirs() {
-      return srcDirs != null && srcDirs instanceof Callable ? srcDirs.call() : srcDirs
-   }  
+    /** Get the source directories, accounting for closures. */
+    def getSrcDirs() {
+        return srcDirs != null && srcDirs instanceof Callable ? srcDirs.call() : srcDirs
+    }  
 
-   /** Get the output directory, accounting for closures. */
-   def getOutput() {
-      return output != null && output instanceof Callable ? output.call() : output
-   }  
+    /** Get the output directory, accounting for closures. */
+    def getOutput() {
+        return output != null && output instanceof Callable ? output.call() : output
+    }  
 
-   /** Validate the Javadoc configuration. */
-   def validateJavadocConfig() {
-      if (getSrcDirs() != null && !getSrcDirs().isEmpty()) {
-         if (getSubpackages() != null && !getSubpackages().isEmpty()) {
-            if (getClasspath() == null || getClasspath() == "unset") {
-               throw new InvalidUserDataException("Javadoc error: classpath is unset")
+    /** Validate the Javadoc configuration. */
+    def validateJavadocConfig() {
+        if (getSrcDirs() != null && !getSrcDirs().isEmpty()) {
+            if (getSubpackages() != null && !getSubpackages().isEmpty()) {
+                if (getClasspath() == null || getClasspath() == "unset") {
+                    throw new InvalidUserDataException("Javadoc error: classpath is unset")
+                }
+
+                if (getTitle() == null || getTitle() == "unset") {
+                    throw new InvalidUserDataException("Javadoc error: title is unset")
+                }
+
+                if (getOutput() == null || getOutput() == "unset") {
+                    throw new InvalidUserDataException("Javadoc error: output is unset")
+                }
             }
-
-            if (getTitle() == null || getTitle() == "unset") {
-               throw new InvalidUserDataException("Javadoc error: title is unset")
-            }
-
-            if (getOutput() == null || getOutput() == "unset") {
-               throw new InvalidUserDataException("Javadoc error: output is unset")
-            }
-         }
-      }
-   }
+        }
+    }
 
 }

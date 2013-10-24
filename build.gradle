@@ -1,4 +1,4 @@
-// vim: set ft=groovy:
+// vim: set ft=groovy ts=4 sw=4:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // *
 // *              C E D A R
@@ -56,47 +56,47 @@ version = config_mavenPublishVersion
 tasks.publish.dependsOn += [ label, ] 
 
 dependencies {
-   compile gradleApi()
-   compile localGroovy()
+    compile gradleApi()
+    compile localGroovy()
 }
 
 cedarLabel {
-   enabled = config_mercurialLabelEnabled
-   projectName = "CedarBuild"
-   projectVersion = config_mavenPublishVersion
-   repositories = [ projectDir, ]
-   mercurialPath = config_mercurialPath
+    enabled = config_mercurialLabelEnabled
+    projectName = "CedarBuild"
+    projectVersion = config_mavenPublishVersion
+    repositories = [ projectDir, ]
+    mercurialPath = config_mercurialPath
 }
 
 cedarCopyright {
-   licensePattern = '^.*LICENSE$'
-   sourcePatterns = [ '^.*\\.java$', '^.*\\.groovy$', '^.*\\.gradle$', ]
-   repositories = [ projectDir, ]
-   mercurialPath = config_mercurialPath
+    licensePattern = '^.*LICENSE$'
+    sourcePatterns = [ '^.*\\.java$', '^.*\\.groovy$', '^.*\\.gradle$', ]
+    repositories = [ projectDir, ]
+    mercurialPath = config_mercurialPath
 }
 
 cedarSigning {
-   gpgKeyId = config_gpgKeyId
-   gpgSecretKey = config_gpgSecretKey
-   projects = allprojects
+    gpgKeyId = config_gpgKeyId
+    gpgSecretKey = config_gpgSecretKey
+    projects = allprojects
 }
 
 jar {
-   from "buildSrc/build/classes/main"
-   from "buildSrc/build/resources/main"
+    from "buildSrc/build/classes/main"
+    from "buildSrc/build/resources/main"
 }
 
 artifacts {
-   archives jar
+    archives jar
 }
 
 signing {
-   required = { cedarPublish.isSignatureRequired() }
-   sign jar
+    required = { cedarPublish.isSignatureRequired() }
+    sign jar
 }
 
 cedarPublish {
-   mercurialMavenProject = config_mercurialMavenProject
+    mercurialMavenProject = config_mercurialMavenProject
 }
 
 uploadArchives {
@@ -106,37 +106,37 @@ uploadArchives {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
             pom.artifactId = artifactId
             pom.project {
-               name "Cedar Build Functionality"
-               description "Gradle plugins and other functionality for use with a standardized build process."
-               url "https://code.google.com/p/cedar-common/"
-               scm {
-                  url "scm:hg:https://code.google.com/p/cedar-common.build/"
-                  connection "scm:hg:https://code.google.com/p/cedar-common.build/"
-                  developerConnection "scm:hg:https://code.google.com/p/cedar-common.build/"
-               }
-               licenses {
-                  license {
-                     name "The Apache Software License, Version 2.0"
-                     url "http://www.apache.org/license/LICENSE-2.0.txt"
-                     distribution "repo"
-                  }
-               }
-               developers {
-                  developer {
-                     id "pronovic"
-                     name "Kenneth J. Pronovici"
-                     email "pronovic@ieee.org"
-                  }
-               }
+                name "Cedar Build Functionality"
+                description "Gradle plugins and other functionality for use with a standardized build process."
+                url "https://code.google.com/p/cedar-common/"
+                scm {
+                    url "scm:hg:https://code.google.com/p/cedar-common.build/"
+                    connection "scm:hg:https://code.google.com/p/cedar-common.build/"
+                    developerConnection "scm:hg:https://code.google.com/p/cedar-common.build/"
+                }
+                licenses {
+                    license {
+                        name "The Apache Software License, Version 2.0"
+                        url "http://www.apache.org/license/LICENSE-2.0.txt"
+                        distribution "repo"
+                    }
+                }
+                developers {
+                    developer {
+                        id "pronovic"
+                        name "Kenneth J. Pronovici"
+                        email "pronovic@ieee.org"
+                    }
+                }
             }
         }
     }
 }
 
 install {
-   repositories.mavenInstaller {
-      pom.artifactId = artifactId
-   }
+    repositories.mavenInstaller {
+        pom.artifactId = artifactId
+    }
 }
 
 
@@ -146,35 +146,35 @@ install {
 
 // Generate XML bindings for the Mercurial XML output (used by the copyright tool)
 task generateHgBindings << {
-   def resourcesDir = "gradle/resources"
-   def generatedDir = "buildSrc/src/main/java"
-   def schemaDir = generatedDir + "/com/cedarsolutions/xml/schema/hg/log"
-   def bindingsDir = generatedDir + "/com/cedarsolutions/xml/bindings/hg/log"
-   def bindingsPackage = "com.cedarsolutions.xml.bindings.hg.log"
-   def sourceXml = resourcesDir + "/hglog.xml"
-   def schema = schemaDir + "/hglog.xsd"
+    def resourcesDir = "gradle/resources"
+    def generatedDir = "buildSrc/src/main/java"
+    def schemaDir = generatedDir + "/com/cedarsolutions/xml/schema/hg/log"
+    def bindingsDir = generatedDir + "/com/cedarsolutions/xml/bindings/hg/log"
+    def bindingsPackage = "com.cedarsolutions.xml.bindings.hg.log"
+    def sourceXml = resourcesDir + "/hglog.xml"
+    def schema = schemaDir + "/hglog.xsd"
 
-   file(schemaDir).mkdirs()
-   file(bindingsDir).mkdirs()
+    file(schemaDir).mkdirs()
+    file(bindingsDir).mkdirs()
 
-   ant.delete(quiet : "true") {
-      fileset(dir: schemaDir, includes : "*.xsd")
-      fileset(dir: bindingsDir, includes : "**/*.java")
-   }
+    ant.delete(quiet : "true") {
+        fileset(dir: schemaDir, includes : "*.xsd")
+        fileset(dir: bindingsDir, includes : "**/*.java")
+    }
 
-   ant.java(jar : config_trangJarPath, fork : "true", failonerror : "true") {
-      arg(value : sourceXml)
-      arg(value : schema)
-   }
+    ant.java(jar : config_trangJarPath, fork : "true", failonerror : "true") {
+        arg(value : sourceXml)
+        arg(value : schema)
+    }
 
-   ant.exec(executable : config_xjcPath) {
-      arg(value : "-d")
-      arg(value : generatedDir)
-      arg(value : "-p")
-      arg(value : bindingsPackage)
-      arg(value : "-xmlschema")
-      arg(value : schema)
-   }
+    ant.exec(executable : config_xjcPath) {
+        arg(value : "-d")
+        arg(value : generatedDir)
+        arg(value : "-p")
+        arg(value : bindingsPackage)
+        arg(value : "-xmlschema")
+        arg(value : schema)
+    }
 }
 
 // Generate all XML bindings

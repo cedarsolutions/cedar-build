@@ -1,4 +1,4 @@
-// vim: set ft=groovy ts=3:
+// vim: set ft=groovy ts=4 sw=4:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // *
 // *              C E D A R
@@ -34,46 +34,46 @@ import org.gradle.api.InvalidUserDataException
  */
 class CedarLabelPluginConvention {
 
-   /** The project tied to this convention. */
-   private Project project;
+    /** The project tied to this convention. */
+    private Project project;
 
-   /** Create a convention tied to a project. */
-   public CedarLabelPluginConvention(Project project) {
-      this.project = project
-   }
+    /** Create a convention tied to a project. */
+    public CedarLabelPluginConvention(Project project) {
+        this.project = project
+    }
 
-   /** Label Mercurial repositories per configuration. */
-   def labelMercurialRepositories() {
-      def enabled = project.cedarLabel.isEnabled()
-      if (!enabled) {
-         project.logger.lifecycle("CedarBuild label tool: labeling is disabled")
-      } else {
-         def projectName = project.cedarLabel.getProjectName()
-         def projectVersion = project.cedarLabel.getProjectVersion()
-         def repositories = project.cedarLabel.getRepositories()
-         def mercurialPath = project.cedarLabel.getMercurialPath()
-         if (repositories == null || repositories.isEmpty()) {
-            project.logger.lifecycle("CedarBuild label tool: no Mercurial repositories to label")
-         } else {
-            def label = generateLabel(projectName, projectVersion)
-            project.logger.lifecycle("CedarBuild label tool: applying ${label}")
-            repositories.each { repository ->
-               project.logger.lifecycle(" --> ${repository}")
-               project.ant.exec(executable: mercurialPath, dir: repository, failonerror: "true") {
-                  arg(value: "tag")
-                  arg(value: "-f")
-                  arg(value: label)
-               }
+    /** Label Mercurial repositories per configuration. */
+    def labelMercurialRepositories() {
+        def enabled = project.cedarLabel.isEnabled()
+        if (!enabled) {
+            project.logger.lifecycle("CedarBuild label tool: labeling is disabled")
+        } else {
+            def projectName = project.cedarLabel.getProjectName()
+            def projectVersion = project.cedarLabel.getProjectVersion()
+            def repositories = project.cedarLabel.getRepositories()
+            def mercurialPath = project.cedarLabel.getMercurialPath()
+            if (repositories == null || repositories.isEmpty()) {
+                project.logger.lifecycle("CedarBuild label tool: no Mercurial repositories to label")
+            } else {
+                def label = generateLabel(projectName, projectVersion)
+                project.logger.lifecycle("CedarBuild label tool: applying ${label}")
+                repositories.each { repository ->
+                    project.logger.lifecycle(" --> ${repository}")
+                    project.ant.exec(executable: mercurialPath, dir: repository, failonerror: "true") {
+                        arg(value: "tag")
+                        arg(value: "-f")
+                        arg(value: label)
+                    }
+                }
             }
-         }
-      }
-   }
+        }
+    }
 
-   /** Generate a standard label based on name and version. */
-   def generateLabel(String projectName, String projectVersion) {
-      def timestamp = new Date().format("yyyyMMddHHmmssSSS", TimeZone.getTimeZone("UTC"))
-      def label = "${projectName}__v${projectVersion}__${timestamp}"
-      return label.replace(":", "").replace(" ", "_") // Mercurial doesn't allow colon or space in tag name
-   }
+    /** Generate a standard label based on name and version. */
+    def generateLabel(String projectName, String projectVersion) {
+        def timestamp = new Date().format("yyyyMMddHHmmssSSS", TimeZone.getTimeZone("UTC"))
+        def label = "${projectName}__v${projectVersion}__${timestamp}"
+        return label.replace(":", "").replace(" ", "_") // Mercurial doesn't allow colon or space in tag name
+    }
 
 }

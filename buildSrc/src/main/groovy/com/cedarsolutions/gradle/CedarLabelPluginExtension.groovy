@@ -1,4 +1,4 @@
-// vim: set ft=groovy ts=3:
+// vim: set ft=groovy ts=4 sw=4:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // *
 // *              C E D A R
@@ -34,80 +34,80 @@ import java.util.concurrent.Callable
  */
 class CedarLabelPluginExtension {
 
-   /** Project tied to this extension. */
-   private Project project;
+    /** Project tied to this extension. */
+    private Project project;
 
-   /** Create an extension for a project. */
-   public CedarLabelPluginExtension(Project project) {
-      this.project = project;
-   }
+    /** Create an extension for a project. */
+    public CedarLabelPluginExtension(Project project) {
+        this.project = project;
+    }
 
-   /** Whether label generation is enabled. */
-   def enabled
+    /** Whether label generation is enabled. */
+    def enabled
 
-   /** The name of the project that the label is tied to. */
-   def projectName
+    /** The name of the project that the label is tied to. */
+    def projectName
 
-   /** The version that should be used for the label. */
-   def projectVersion
-   
-   /** List of Mercurial directories that should be labeled. */
-   def repositories
+    /** The version that should be used for the label. */
+    def projectVersion
 
-   /** Path to the Mercurial exectuable. */
-   def mercurialPath
+    /** List of Mercurial directories that should be labeled. */
+    def repositories
 
-   /** Get the enabled flag, allowing for a default (null=true) and closure assignment. */
-   boolean isEnabled() {
-      if (enabled != null) {
-         if (enabled instanceof Callable) {
-            return enabled.call() == "true" ? true : false
-         } else {
-            return enabled == "true" ? true : false
-         }
-      } else {
-         return true
-      }
-   }
+    /** Path to the Mercurial exectuable. */
+    def mercurialPath
 
-   /** Get the project name, allowing for closure assignment. */
-   String getProjectName() {
-      return projectName != null && projectName instanceof Callable ? projectName.call() : projectName
-   }  
-
-   /** Get the project version, allowing for closure assignment. */
-   String getProjectVersion() {
-      return projectVersion != null && projectVersion instanceof Callable ? projectVersion.call() : projectVersion
-   }  
-
-   /** Get the repositories list, allowing for closure assignment. */
-   def getRepositories() {
-      return repositories != null && repositories instanceof Callable ? repositories.call() : repositories
-   }  
-
-   /** Get the Mercurial path, allowing for closure assignment. */
-   String getMercurialPath() {
-      return mercurialPath != null && mercurialPath instanceof Callable ? mercurialPath.call() : mercurialPath
-   }  
-
-   /** Validate the label configuration. */
-   def validateLabelConfig() {
-      if (getEnabled()) {
-         if (getRepositories() != null && !getRepositories().isEmpty()) {
-            if (getProjectName() == null || getProjectName() == "unset") {
-               throw new InvalidUserDataException("Label error: projectName is unset")
+    /** Get the enabled flag, allowing for a default (null=true) and closure assignment. */
+    boolean isEnabled() {
+        if (enabled != null) {
+            if (enabled instanceof Callable) {
+                return enabled.call() == "true" ? true : false
+            } else {
+                return enabled == "true" ? true : false
             }
+        } else {
+            return true
+        }
+    }
 
-            if (getProjectVersion() == null || getProjectVersion() == "unset") {
-               throw new InvalidUserDataException("Label error: projectVersion is unset")
-            }
+    /** Get the project name, allowing for closure assignment. */
+    String getProjectName() {
+        return projectName != null && projectName instanceof Callable ? projectName.call() : projectName
+    }  
 
-            if (getMercurialPath() == null || getMercurialPath() == "unset") {
-               throw new InvalidUserDataException("Label error: mercurialPath is unset")
+    /** Get the project version, allowing for closure assignment. */
+    String getProjectVersion() {
+        return projectVersion != null && projectVersion instanceof Callable ? projectVersion.call() : projectVersion
+    }  
+
+    /** Get the repositories list, allowing for closure assignment. */
+    def getRepositories() {
+        return repositories != null && repositories instanceof Callable ? repositories.call() : repositories
+    }  
+
+    /** Get the Mercurial path, allowing for closure assignment. */
+    String getMercurialPath() {
+        return mercurialPath != null && mercurialPath instanceof Callable ? mercurialPath.call() : mercurialPath
+    }  
+
+    /** Validate the label configuration. */
+    def validateLabelConfig() {
+        if (getEnabled()) {
+            if (getRepositories() != null && !getRepositories().isEmpty()) {
+                if (getProjectName() == null || getProjectName() == "unset") {
+                    throw new InvalidUserDataException("Label error: projectName is unset")
+                }
+
+                if (getProjectVersion() == null || getProjectVersion() == "unset") {
+                    throw new InvalidUserDataException("Label error: projectVersion is unset")
+                }
+
+                if (getMercurialPath() == null || getMercurialPath() == "unset") {
+                    throw new InvalidUserDataException("Label error: mercurialPath is unset")
+                }
             }
-         }
-      }
-   }
+        }
+    }
 
 }
 

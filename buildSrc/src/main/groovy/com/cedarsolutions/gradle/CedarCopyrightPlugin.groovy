@@ -1,4 +1,4 @@
-// vim: set ft=groovy ts=3:
+// vim: set ft=groovy ts=4 sw=4:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // *
 // *              C E D A R
@@ -35,18 +35,18 @@ import org.gradle.plugins.signing.SigningPlugin
  */
 class CedarCopyrightPlugin implements Plugin<Project> {
 
-   /** Apply the plugin. */
-   void apply(Project project) {
-      project.extensions.create("cedarCopyright", CedarCopyrightPluginExtension, project)
-      project.convention.plugins.cedarCopyright = new CedarCopyrightPluginConvention(project)
+    /** Apply the plugin. */
+    void apply(Project project) {
+        project.extensions.create("cedarCopyright", CedarCopyrightPluginExtension, project)
+        project.convention.plugins.cedarCopyright = new CedarCopyrightPluginConvention(project)
 
-      project.task("validateCopyrightSetup") << {
-         project.cedarCopyright.validateCopyrightConfig()
-      }
+        project.task("validateCopyrightSetup") << {
+            project.cedarCopyright.validateCopyrightConfig()
+        }
 
-      project.task("copyright", dependsOn: [ project.tasks.validateCopyrightSetup, ]) << {
-         project.convention.plugins.cedarCopyright.updateCopyrightStatements()
-      }
-   }
+        project.task("copyright", dependsOn: [ project.tasks.validateCopyrightSetup, ]) << {
+            project.convention.plugins.cedarCopyright.updateCopyrightStatements()
+        }
+    }
 
 }

@@ -1,4 +1,4 @@
-// vim: set ft=groovy ts=3:
+// vim: set ft=groovy ts=4 sw=4:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // *
 // *              C E D A R
@@ -33,50 +33,50 @@ import org.gradle.api.InvalidUserDataException
  */
 class CedarCopyrightPluginConvention {
 
-   /** The project tied to this convention. */
-   private Project project;
+    /** The project tied to this convention. */
+    private Project project;
 
-   /** Create a convention tied to a project. */
-   public CedarCopyrightPluginConvention(Project project) {
-      this.project = project
-   }
+    /** Create a convention tied to a project. */
+    public CedarCopyrightPluginConvention(Project project) {
+        this.project = project
+    }
 
-   /** Update copyright statements, using the copyright tool. */
-   def updateCopyrightStatements() {
-      def repositories = project.cedarCopyright.getRepositories()
-      def mercurialPath = project.cedarCopyright.getMercurialPath()
+    /** Update copyright statements, using the copyright tool. */
+    def updateCopyrightStatements() {
+        def repositories = project.cedarCopyright.getRepositories()
+        def mercurialPath = project.cedarCopyright.getMercurialPath()
 
-      def licensePattern = '"' + project.cedarCopyright.getLicensePattern() + '"'
+        def licensePattern = '"' + project.cedarCopyright.getLicensePattern() + '"'
 
-      def sourcePatterns = ""
-      project.cedarCopyright.getSourcePatterns().each { pattern ->
-         sourcePatterns += ' "' + pattern + '"'
-      }
+        def sourcePatterns = ""
+        project.cedarCopyright.getSourcePatterns().each { pattern ->
+            sourcePatterns += ' "' + pattern + '"'
+        }
 
-      if (repositories == null || repositories.isEmpty()) {
-         project.logger.lifecycle("CedarBuild copyright tool: no Mercurial repositories to update")
-      } else {
-         project.logger.lifecycle("CedarBuild copyright tool: updating copyright statements")
+        if (repositories == null || repositories.isEmpty()) {
+            project.logger.lifecycle("CedarBuild copyright tool: no Mercurial repositories to update")
+        } else {
+            project.logger.lifecycle("CedarBuild copyright tool: updating copyright statements")
 
-         // This is a hack, but there's apparently no other way to get at our buildSrc jar
-         def cp = project.buildscript.configurations.classpath.asPath
-         if (cp.length() == 0 && project.name == "CedarBuild") {
-            cp = "buildSrc/build/libs/buildSrc.jar"
-         }
-
-         repositories.each { repository ->
-            project.logger.lifecycle(" --> ${repository}")
-            project.ant.java(classname : "com.cedarsolutions.tools.copyright.CopyrightTool", fork: "true", failonerror: "true") {
-               arg(value : project.cedarCopyright.getMercurialPath())
-               arg(value : repository)
-               arg(value : licensePattern)
-               arg(line  : sourcePatterns)
-               classpath() {
-                  pathelement(path: cp)
-               }
+            // This is a hack, but there's apparently no other way to get at our buildSrc jar
+            def cp = project.buildscript.configurations.classpath.asPath
+            if (cp.length() == 0 && project.name == "CedarBuild") {
+                cp = "buildSrc/build/libs/buildSrc.jar"
             }
-         }
-      } 
-   }
+
+            repositories.each { repository ->
+                project.logger.lifecycle(" --> ${repository}")
+                project.ant.java(classname : "com.cedarsolutions.tools.copyright.CopyrightTool", fork: "true", failonerror: "true") {
+                    arg(value : project.cedarCopyright.getMercurialPath())
+                    arg(value : repository)
+                    arg(value : licensePattern)
+                    arg(line  : sourcePatterns)
+                    classpath() {
+                        pathelement(path: cp)
+                    }
+                }
+            }
+        } 
+    }
 
 }

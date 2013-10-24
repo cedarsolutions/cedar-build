@@ -1,4 +1,4 @@
-// vim: set ft=groovy ts=3:
+// vim: set ft=groovy ts=4 sw=4:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // *
 // *              C E D A R
@@ -34,56 +34,56 @@ import org.gradle.api.InvalidUserDataException
  */
 class CedarSigningPluginConvention {
 
-   /** The project tied to this convention. */
-   private Project project;
+    /** The project tied to this convention. */
+    private Project project;
 
-   /** Create a convention tied to a project. */
-   public CedarSigningPluginConvention(Project project) {
-      this.project = project
-   }
+    /** Create a convention tied to a project. */
+    public CedarSigningPluginConvention(Project project) {
+        this.project = project
+    }
 
-   /** Apply signature configuration to all projects if necessary. */
-   def applySignatureConfiguration(taskGraph) {
-      if (taskGraphRequiresSignatures(taskGraph)) {
-         getGpgPassphrase({ input -> setSignatureConfiguration(input) })
-      }
-   }
+    /** Apply signature configuration to all projects if necessary. */
+    def applySignatureConfiguration(taskGraph) {
+        if (taskGraphRequiresSignatures(taskGraph)) {
+            getGpgPassphrase({ input -> setSignatureConfiguration(input) })
+        }
+    }
 
-   /** Check whether a task graph indicates that signatures are required. */
-   def taskGraphRequiresSignatures(taskGraph) {
-      return taskGraph.allTasks.any { it instanceof Sign && it.required }
-   }
+    /** Check whether a task graph indicates that signatures are required. */
+    def taskGraphRequiresSignatures(taskGraph) {
+        return taskGraph.allTasks.any { it instanceof Sign && it.required }
+    }
 
-   /** Get a GPG passphrase from the user, calling a closure with the result. */
-   def getGpgPassphrase(action) {
-      validateGpgConfig()
-      String title = "GPG key " + project.cedarSigning.getGpgKeyId();
-      String label = "Enter passphrase"
-      project.convention.plugins.cedarBuild.getInput(title, label, true, action)
-   }
+    /** Get a GPG passphrase from the user, calling a closure with the result. */
+    def getGpgPassphrase(action) {
+        validateGpgConfig()
+        String title = "GPG key " + project.cedarSigning.getGpgKeyId();
+        String label = "Enter passphrase"
+        project.convention.plugins.cedarBuild.getInput(title, label, true, action)
+    }
 
-   /** Set signature configuration for all projects. */
-   def setSignatureConfiguration(passphrase) {
-      project.cedarSigning.getProjects().each { project ->
-         project.ext."signing.keyId" = project.cedarSigning.getGpgKeyId() 
-         project.ext."signing.secretKeyRingFile" = project.cedarSigning.getGpgSecretKey()
-         project.ext."signing.password" = passphrase
-      }
-   }
+    /** Set signature configuration for all projects. */
+    def setSignatureConfiguration(passphrase) {
+        project.cedarSigning.getProjects().each { project ->
+            project.ext."signing.keyId" = project.cedarSigning.getGpgKeyId() 
+            project.ext."signing.secretKeyRingFile" = project.cedarSigning.getGpgSecretKey()
+            project.ext."signing.password" = passphrase
+        }
+    }
 
-   /** Validate the GPG configuration. */
-   def validateGpgConfig() {
-      if (project.cedarSigning.getGpgKeyId() == null || project.cedarSigning.getGpgKeyId() == "unset") {
-         throw new InvalidUserDataException("Publish error: gpgKeyId is unset")
-      }
+    /** Validate the GPG configuration. */
+    def validateGpgConfig() {
+        if (project.cedarSigning.getGpgKeyId() == null || project.cedarSigning.getGpgKeyId() == "unset") {
+            throw new InvalidUserDataException("Publish error: gpgKeyId is unset")
+        }
 
-      if (project.cedarSigning.getGpgSecretKey() == null || project.cedarSigning.getGpgSecretKey() == "unset") {
-         throw new InvalidUserDataException("Publish error: gpgSecretKey is unset")
-      }
+        if (project.cedarSigning.getGpgSecretKey() == null || project.cedarSigning.getGpgSecretKey() == "unset") {
+            throw new InvalidUserDataException("Publish error: gpgSecretKey is unset")
+        }
 
-      if (!(new File(project.cedarSigning.getGpgSecretKey()).isFile())) {
-         throw new InvalidUserDataException("Publish error: GPG secret key not found: " + project.cedarSigning.getGpgSecretKey())
-      }
-   }
+        if (!(new File(project.cedarSigning.getGpgSecretKey()).isFile())) {
+            throw new InvalidUserDataException("Publish error: GPG secret key not found: " + project.cedarSigning.getGpgSecretKey())
+        }
+    }
 
 }

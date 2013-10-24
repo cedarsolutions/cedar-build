@@ -1,4 +1,4 @@
-// vim: set ft=groovy ts=3:
+// vim: set ft=groovy ts=4 sw=4:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // *
 // *              C E D A R
@@ -35,36 +35,36 @@ import java.util.concurrent.Callable
  */
 class CedarSigningPluginExtension {
 
-   /** Project tied to this extension. */
-   private Project project;
+    /** Project tied to this extension. */
+    private Project project;
 
-   /** Create an extension for a project. */
-   public CedarSigningPluginExtension(Project project) {
-      this.project = project;
-   }
+    /** Create an extension for a project. */
+    public CedarSigningPluginExtension(Project project) {
+        this.project = project;
+    }
 
-   /** The id of the GPG key that will be used to sign code. */
-   def gpgKeyId
+    /** The id of the GPG key that will be used to sign code. */
+    def gpgKeyId
 
-   /** Path to the GPG secret key that will be used to sign code. */
-   def gpgSecretKey
-   
-   /** Projects that require configuration for digital signatures. */
-   def projects
+    /** Path to the GPG secret key that will be used to sign code. */
+    def gpgSecretKey
 
-   /** Get the GPG id, allowing for closure assignment. */
-   String getGpgKeyId() {
-      return gpgKeyId != null && gpgKeyId instanceof Callable ? gpgKeyId.call() : gpgKeyId
-   }  
+    /** Projects that require configuration for digital signatures. */
+    def projects
 
-   /** Get the GPG secret key, allowing for closure assignment. */
-   String getGpgSecretKey() {
-      return gpgSecretKey != null && gpgSecretKey instanceof Callable ? gpgSecretKey.call() : gpgSecretKey
-   }  
+    /** Get the GPG id, allowing for closure assignment. */
+    String getGpgKeyId() {
+        return gpgKeyId != null && gpgKeyId instanceof Callable ? gpgKeyId.call() : gpgKeyId
+    }  
 
-   /** Get the list of projects, allowing for closure assignment. */
-   def getProjects() {
-      return projects != null && projects instanceof Callable ? projects.call() : projects
-   }  
+    /** Get the GPG secret key, allowing for closure assignment. */
+    String getGpgSecretKey() {
+        return gpgSecretKey != null && gpgSecretKey instanceof Callable ? gpgSecretKey.call() : gpgSecretKey
+    }  
+
+    /** Get the list of projects, allowing for closure assignment. */
+    def getProjects() {
+        return projects != null && projects instanceof Callable ? projects.call() : projects
+    }  
 
 }

@@ -1,4 +1,4 @@
-// vim: set ft=groovy ts=3:
+// vim: set ft=groovy ts=4 sw=4:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // *
 // *              C E D A R
@@ -33,18 +33,18 @@ import org.gradle.api.Plugin
  */
 class CedarJavadocPlugin implements Plugin<Project> {
 
-   /** Apply the plugin. */
-   void apply(Project project) {
-      project.extensions.create("cedarJavadoc", CedarJavadocPluginExtension, project)
-      project.convention.plugins.cedarJavadoc = new CedarJavadocPluginConvention(project)
+    /** Apply the plugin. */
+    void apply(Project project) {
+        project.extensions.create("cedarJavadoc", CedarJavadocPluginExtension, project)
+        project.convention.plugins.cedarJavadoc = new CedarJavadocPluginConvention(project)
 
-      project.task("validateJavadocSetup") << {
-         project.cedarJavadoc.validateJavadocConfig()
-      }
+        project.task("validateJavadocSetup") << {
+            project.cedarJavadoc.validateJavadocConfig()
+        }
 
-      project.task("jdoc", dependsOn: [ project.tasks.validateJavadocSetup, project.tasks.classes, ]) << {
-         project.convention.plugins.cedarJavadoc.generateJavadoc()
-      }
-   }
+        project.task("jdoc", dependsOn: [ project.tasks.validateJavadocSetup, project.tasks.classes, ]) << {
+            project.convention.plugins.cedarJavadoc.generateJavadoc()
+        }
+    }
 
 }

@@ -1,4 +1,4 @@
-// vim: set ft=groovy ts=3:
+// vim: set ft=groovy ts=4 sw=4:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // *
 // *              C E D A R
@@ -35,61 +35,61 @@ import java.util.Properties
  */
 class CedarBuildPluginConvention {
 
-   /** Project tied to this convention. */
-   private Project project;
+    /** Project tied to this convention. */
+    private Project project;
 
-   /** Create a convention for a project. */
-   public CedarBuildPluginConvention(Project project) {
-      this.project = project;
-   }
+    /** Create a convention for a project. */
+    public CedarBuildPluginConvention(Project project) {
+        this.project = project;
+    }
 
-   /**
+    /**
     * Copy Javadoc from a set of projects to a Mercurial project for publishing.
     * @param mercurialJavadocProject  Mercurial project to hold the Javadoco
     * @param projects                 List of projects whose Javadoc to copy
     * @param transform                Transform to use when generating the target directory from the project name
     */
-   def copyJavadocToMercurial(mercurialJavadocProject, projects, transform) {
-      if (mercurialJavadocProject != null && mercurialJavadocProject != "unset") {
-         if (project.file(mercurialJavadocProject).isDirectory()) {
-            def baseDir = project.file(mercurialJavadocProject)
-            projects.each { item ->
-               def sourceDir = project.file(item.docsDir.canonicalPath + "/javadoc")
-               def index = project.file(sourceDir.canonicalPath + "/index.html")
-               def targetDir = project.file(baseDir.canonicalPath + "/" + transform.call(item.name))
-               if (index.isFile()) {
-                  targetDir.deleteDir()
-                  targetDir.mkdirs()
-                  project.ant.copy(todir: targetDir) {
-                     fileset(dir: sourceDir, includes: "**/*")
-                  }
-               }
+    def copyJavadocToMercurial(mercurialJavadocProject, projects, transform) {
+        if (mercurialJavadocProject != null && mercurialJavadocProject != "unset") {
+            if (project.file(mercurialJavadocProject).isDirectory()) {
+                def baseDir = project.file(mercurialJavadocProject)
+                projects.each { item ->
+                    def sourceDir = project.file(item.docsDir.canonicalPath + "/javadoc")
+                    def index = project.file(sourceDir.canonicalPath + "/index.html")
+                    def targetDir = project.file(baseDir.canonicalPath + "/" + transform.call(item.name))
+                    if (index.isFile()) {
+                        targetDir.deleteDir()
+                        targetDir.mkdirs()
+                        project.ant.copy(todir: targetDir) {
+                            fileset(dir: sourceDir, includes: "**/*")
+                        }
+                    }
+                }
             }
-         }
-      }
-   }
+        }
+    }
 
-   /** 
+    /** 
     * Configure Eclipse to ignore resources in a set of directories.
     * This adds a new stanza at the bottom of the Eclipse .project file.
     * @see: http://forums.gradle.org/gradle/topics/eclipse_generated_files_should_be_put_in_the_same_place_as_the_gradle_generated_files
     */
-   def ignoreResourcesFromDirectories(provider, directories) {
-      def filter = provider.asNode().appendNode("filteredResources").appendNode("filter")
-      filter.appendNode("id", String.valueOf(System.currentTimeMillis()))  // this id must be unique
-      filter.appendNode("name")
-      filter.appendNode("type", "26")
-      def matcher = filter.appendNode("matcher")
-      matcher.appendNode("id", "org.eclipse.ui.ide.orFilterMatcher")
-      def arguments = matcher.appendNode("arguments")
-      directories.each {
-         def dirMatcher = arguments.appendNode("matcher")
-         dirMatcher.appendNode("id", "org.eclipse.ui.ide.multiFilter")
-         dirMatcher.appendNode("arguments", "1.0-projectRelativePath-matches-true-false-${it}")
-      }
-   } 
-
-   /**
+    def ignoreResourcesFromDirectories(provider, directories) {
+        def filter = provider.asNode().appendNode("filteredResources").appendNode("filter")
+        filter.appendNode("id", String.valueOf(System.currentTimeMillis()))  // this id must be unique
+        filter.appendNode("name")
+        filter.appendNode("type", "26")
+        def matcher = filter.appendNode("matcher")
+        matcher.appendNode("id", "org.eclipse.ui.ide.orFilterMatcher")
+        def arguments = matcher.appendNode("arguments")
+        directories.each {
+            def dirMatcher = arguments.appendNode("matcher")
+            dirMatcher.appendNode("id", "org.eclipse.ui.ide.multiFilter")
+            dirMatcher.appendNode("arguments", "1.0-projectRelativePath-matches-true-false-${it}")
+        }
+    } 
+    
+    /**
     * Get input from the user, executing a closure with the result.
     * If the console is available, we'll use it. Otherwise, we'll fall back on a GUI pop-up.
     * @param title   Title for the input we're requesting
@@ -97,80 +97,80 @@ class CedarBuildPluginConvention {
     * @param secure  Whether the input is secure and should be masked
     * @param action  The action to execute when the input has been retrieved
     */
-   def getInput(String title, String label, boolean secure, Closure action) {
-      Console console = System.console()
-      if (console != null) {
-         getInputViaConsole(title, label, secure, action)
-      } else {
-         getInputViaPopup(title, label, secure, action)
-      }
-   }
+    def getInput(String title, String label, boolean secure, Closure action) {
+        Console console = System.console()
+        if (console != null) {
+            getInputViaConsole(title, label, secure, action)
+        } else {
+            getInputViaPopup(title, label, secure, action)
+        }
+    }
 
-   /**
+    /**
     * Get input from a user via the system console, executing a closure with the result
     * @param title   Title for the input we're requesting
     * @param label   Label for the input field
     * @param secure  Whether the input is secure and should be masked
     * @param action  The action to execute when the input has been retrieved
     */
-   def getInputViaConsole(String title, String label, boolean secure, Closure action) {
-      Console console = System.console()
-      if (secure) {
-         def value = console.readPassword("\n\n[" + title + "] " + label + ": ")
-         action(value)
-      } else {
-         def value = console.readLine("\n\n[" + title + "]" + label + ": ")
-         action(value)
-      }
-   }
+    def getInputViaConsole(String title, String label, boolean secure, Closure action) {
+        Console console = System.console()
+        if (secure) {
+            def value = console.readPassword("\n\n[" + title + "] " + label + ": ")
+            action(value)
+        } else {
+            def value = console.readLine("\n\n[" + title + "]" + label + ": ")
+            action(value)
+        }
+    }
 
-   /**
+    /**
     * Get input from a user via the a GUI pop-up, executing a closure with the result
     * @param title   Title for the input we're requesting
     * @param label   Label for the input field
     * @param secure  Whether the input is secure and should be masked
     * @param action  The action to execute when the input has been retrieved
     */
-   def getInputViaPopup(String title, String label, boolean secure, Closure action) {
-      boolean alive = true
+    def getInputViaPopup(String title, String label, boolean secure, Closure action) {
+        boolean alive = true
 
-      def swing = new SwingBuilder()
-      def button = swing.button("Ok")
-      def prefix = swing.label(label)
-      def value = null
+        def swing = new SwingBuilder()
+        def button = swing.button("Ok")
+        def prefix = swing.label(label)
+        def value = null
 
-      def frame = swing.frame(title: title, defaultCloseOperation: JFrame.EXIT_ON_CLOSE) {
-         panel {
-            widget(prefix)
-            if (secure) {
-               value = passwordField(columns:18)
-            } else {
-               value = textField(columns:18)
+        def frame = swing.frame(title: title, defaultCloseOperation: JFrame.EXIT_ON_CLOSE) {
+            panel {
+                widget(prefix)
+                if (secure) {
+                    value = passwordField(columns:18)
+                } else {
+                    value = textField(columns:18)
+                }
+                widget(button)
             }
-            widget(button)
-         }
-      }
+        }
 
-      frame.setLocationRelativeTo(null)
+        frame.setLocationRelativeTo(null)
 
-      button.actionPerformed = {
-         action(value.text)
-         alive = false
-      }
+        button.actionPerformed = {
+            action(value.text)
+            alive = false
+        }
 
-      value.actionPerformed = {
-         action(value.text)
-         alive = false
-      }
+        value.actionPerformed = {
+            action(value.text)
+            alive = false
+        }
 
-      frame.pack()
-      frame.show()
+        frame.pack()
+        frame.show()
 
-      while (alive) {
-         sleep(1000)
-      }
+        while (alive) {
+            sleep(1000)
+        }
 
-      frame.hide()
-   }
+        frame.hide()
+    }
 
 }

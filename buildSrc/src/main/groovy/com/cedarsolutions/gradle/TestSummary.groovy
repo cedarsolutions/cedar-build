@@ -1,4 +1,4 @@
-// vim: set ft=groovy ts=3:
+// vim: set ft=groovy ts=4 sw=4:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // *
 // *              C E D A R
@@ -35,34 +35,36 @@ import org.gradle.api.tasks.testing.TestResult
  * @author Kenneth J. Pronovici <pronovic@ieee.org>
  */
 class TestSummary implements TestListener {
-   long passed;
-   long failed;
-   long skipped;
 
-   public void beforeSuite(TestDescriptor suite) {
-      passed = 0;
-      failed = 0;
-      skipped = 0;
-   }
+    long passed;
+    long failed;
+    long skipped;
 
-   public void afterSuite(TestDescriptor suite, TestResult result) {
-      // On Windows, we get one result called "Test Run".  On Linux, there are several results, and "Test Run" is one of them.
-      if (suite.getName() == "Test Run" && this.getTotal() > 0) {
-         System.out.printf("*** Test results: passed=%d, failed=%d, skipped=%d\n", passed, failed, skipped);
-      }
-   }
+    public void beforeSuite(TestDescriptor suite) {
+        passed = 0;
+        failed = 0;
+        skipped = 0;
+    }
 
-   public void beforeTest(TestDescriptor test) {
-   }
+    public void afterSuite(TestDescriptor suite, TestResult result) {
+        // On Windows, we get one result called "Test Run".  On Linux, there are several results, and "Test Run" is one of them.
+        if (suite.getName() == "Test Run" && this.getTotal() > 0) {
+            System.out.printf("*** Test results: passed=%d, failed=%d, skipped=%d\n", passed, failed, skipped);
+        }
+    }
 
-   public void afterTest(TestDescriptor test, TestResult result) {
-      passed += result.getSuccessfulTestCount();
-      failed += result.getFailedTestCount();
-      skipped += result.getSkippedTestCount();
-   }
+    public void beforeTest(TestDescriptor test) {
+    }
 
-   public int getTotal() {
-      return this.passed + this.failed + this.skipped;
-   }
+    public void afterTest(TestDescriptor test, TestResult result) {
+        passed += result.getSuccessfulTestCount();
+        failed += result.getFailedTestCount();
+        skipped += result.getSkippedTestCount();
+    }
+
+    public int getTotal() {
+        return this.passed + this.failed + this.skipped;
+    }
+
 }
 

@@ -1,4 +1,4 @@
-// vim: set ft=groovy:
+// vim: set ft=groovy ts=4 sw=4:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // *
 // *              C E D A R
@@ -27,6 +27,7 @@ repositories {
 }
 
 dependencies {
-   testCompile "junit:junit:4.11"
-   testCompile "org.mockito:mockito-all:1.9.5"
+    testCompile "junit:junit:4.11"
+    testCompile "org.mockito:mockito-all:1.9.5"
 }
+
