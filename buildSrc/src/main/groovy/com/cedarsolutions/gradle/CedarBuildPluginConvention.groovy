@@ -119,7 +119,7 @@ class CedarBuildPluginConvention {
             def value = console.readPassword("\n\n[" + title + "] " + label + ": ")
             action(value)
         } else {
-            def value = console.readLine("\n\n[" + title + "]" + label + ": ")
+            def value = console.readLine("\n\n[" + title + "] " + label + ": ")
             action(value)
         }
     }
