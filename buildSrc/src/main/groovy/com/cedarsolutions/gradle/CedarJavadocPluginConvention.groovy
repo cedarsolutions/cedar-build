@@ -29,6 +29,7 @@ import org.gradle.plugins.signing.Sign
 import org.gradle.api.InvalidUserDataException
 import java.io.File;
 import org.gradle.util.Jvm;  // this is deprecated, but I can't find notes on what replaces it ?!?
+import org.apache.tools.ant.taskdefs.condition.Os 
 
 /** 
  * Plugin convention for cedarJavadoc. 
@@ -66,11 +67,14 @@ class CedarJavadocPluginConvention {
                 project.file(optionsFile).delete()
                 project.file(output).mkdirs()
                 project.file(tempDir).mkdirs()
+
                 generateOptionsFile(optionsFile, classpath, title, srcDirs, subpackages, output)
                 project.ant.exec(executable: Jvm.current().getJavadocExecutable(), 
                                  failonerror: "true", dir: project.projectDir) {
                     arg(value: "@${optionsFile}")
                 }
+
+                project.ant.fixcrlf(srcdir: output, includes: "**/*", eol: "dos", eof: "asis", fixlast: "false")
             }
         }
     }
@@ -82,24 +86,35 @@ class CedarJavadocPluginConvention {
         // code, and the Java 7 Javadoc compiler gets utterly confused by this.
         // The only workaround I've found is to specify a source path and
         // subpackages, because then it apparently ignores the source in the
-        // jars.  However, this workaround is kind of ugly.  The command-line you
-        // see below has been tested on Windows, but I'm not sure whether it will
-        // work on UNIX or whether the path separator will need to change.  The
-        // stupid Oracle documentation for Javadoc says that the separator is
-        // always colon (":"), but that clearly doesn't work for sourcepath
-        // (although it does seem to be correct for subpackages).
+        // jars.  However, this workaround is kind of ugly.
 
-        new File(optionsFile).withWriter { out ->
-            out.writeLine("-classpath '" + classpath.asPath.replace("\\", "\\\\") + "'")
-            out.writeLine("-d '" + output.replace("\\", "\\\\") + "'")
-            out.writeLine("-quiet")
-            out.writeLine("-notimestamp")
-            out.writeLine("-doctitle '${title}'")
-            out.writeLine("-windowtitle '${title}'")
-            out.writeLine("-sourcepath '" + srcDirs.join(";").replace("\\", "\\\\") + "'")
-            out.writeLine("-subpackages '" + subpackages.join(":") + "'")
+        if (isWindows()) {
+            new File(optionsFile).withWriter { out ->
+                out.writeLine("-classpath '" + classpath.asPath.replace("\\", "\\\\") + "'")
+                out.writeLine("-d '" + output.replace("\\", "\\\\") + "'")
+                out.writeLine("-quiet")
+                out.writeLine("-notimestamp")
+                out.writeLine("-doctitle '${title}'")
+                out.writeLine("-windowtitle '${title}'")
+                out.writeLine("-sourcepath '" + srcDirs.join(";").replace("\\", "\\\\") + "'")
+                out.writeLine("-subpackages '" + subpackages.join(":") + "'")
+            }
+        } else {
+            new File(optionsFile).withWriter { out ->
+                out.writeLine("-classpath '" + classpath.asPath + "'")
+                out.writeLine("-d '" + output + "'")
+                out.writeLine("-quiet")
+                out.writeLine("-notimestamp")
+                out.writeLine("-doctitle '${title}'")
+                out.writeLine("-windowtitle '${title}'")
+                out.writeLine("-sourcepath '" + srcDirs.join(":") + "'")
+                out.writeLine("-subpackages '" + subpackages.join(":") + "'")
+            }
         }
-
     }
+
+    private boolean isWindows() {
+        return Os.isFamily(Os.FAMILY_WINDOWS);
+    } 
 
 }
