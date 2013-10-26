@@ -27,6 +27,7 @@ repositories {
 }
 
 dependencies {
+    compile "org.gradle.api.plugins:gradle-gae-plugin:0.9"
     testCompile "junit:junit:4.11"
     testCompile "org.mockito:mockito-all:1.9.5"
 }
