@@ -231,7 +231,7 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
             project.convention.plugins.cedarGwtOnGae.killDevmode()
             project.convention.plugins.cedarGwtOnGae.bootDevmode()
             project.convention.plugins.cedarGwtOnGae.waitForDevmode()
-            def result = project.convention.plugins.projectCucumber.execCucumber(null, null)
+            def result = project.convention.plugins.cedarCucumber.execCucumber(null, null)
             project.convention.plugins.cedarGwtOnGae.killDevmode()
             result.assertNormalExitValue()
         }
