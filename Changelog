@@ -1,9 +1,9 @@
 Version 0.8.6   unreleased
 
-   * Remove cedarTestSuite; this code is more appropriate at a project level.
+   * Refactor a lot of GWT, test suite, and Cucumber stuff into cedarGwtGae and cedarCucumber.
    * Reindent all of the code with tabstop=4, which is consistent with my Eclipse formatting.
    * Make Javadoc functionality work properly on Linux, and normalize line endings to DOS CR/LF.
-   * Fix typo when getting user input from console.
+   * Fix typo when getting user input from console (just a missing space in the output).
 
 Version 0.8.5   16 Sep 2013
 

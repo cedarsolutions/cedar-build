@@ -58,6 +58,7 @@ tasks.publish.dependsOn += [ label, ]
 dependencies {
     compile gradleApi()
     compile localGroovy()
+    compile "org.gradle.api.plugins:gradle-gae-plugin:0.9"
 }
 
 cedarLabel {
