@@ -148,12 +148,21 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
 
         // Run the Cucumber tests, assuming the devmode server is already up
         // Note that you have to manually build the application and boot devmode for this to work
-        project.task("runCucumber") << {
+        project.task("runCucumber", dependsOn: project.tasks.verifyCucumber) << {
+            project.convention.plugins.cedarCucumber.execCucumber(null, null).assertNormalExitValue()
+        }
+
+        // Run the Cucumber tests, including a reboot of the server
+        // Note that you have to manually build the application for this to work
+        project.task("runCucumberWithReboot", dependsOn: project.tasks.verifyCucumber) << {
+            project.convention.plugins.cedarGwtOnGae.rebootDevmode()
+            project.convention.plugins.cedarGwtOnGae.waitForDevmode()
             project.convention.plugins.cedarCucumber.execCucumber(null, null).assertNormalExitValue()
         }
 
         // Run the Cucumber tests, restricting by name containing a substring, assuming the devmode server is already up
         // Note that you have to manually build the application and boot devmode for this to work
+        // This does not depend on verifyCucumber because that step is really slow with JRuby and this is a time-saving task.
         project.task("runCucumberByName") << {
             def name = null
             project.convention.plugins.cedarBuild.getInput("Configure Cucumber", "Test Name", false, { input -> name = input})
@@ -162,18 +171,11 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
 
         // Run the Cucumber tests for a specific feature file, assuming the devmode server is already up
         // Note that you have to manually build the application and boot devmode for this to work
+        // This does not depend on verifyCucumber because that step is really slow with JRuby and this is a time-saving task.
         project.task("runCucumberByFeature") << {
             def feature = null
             project.convention.plugins.cedarBuild.getInput("Configure Cucumber", "Feature Path", false, { input -> feature = input})
             project.convention.plugins.cedarCucumber.execCucumber(null, feature).assertNormalExitValue()
-        }
-
-        // Run the Cucumber tests, including a reboot of the server
-        // Note that you have to manually build the application for this to work
-        project.task("runCucumberWithReboot") << {
-            project.convention.plugins.cedarGwtOnGae.rebootDevmode()
-            project.convention.plugins.cedarGwtOnGae.waitForDevmode()
-            project.convention.plugins.cedarCucumber.execCucumber(null, null).assertNormalExitValue()
         }
 
     }
@@ -227,7 +229,7 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
         }
 
         // Run the acceptance tests, including a build of the application
-        project.task("acceptancetest", dependsOn: project.tasks.buildApplication) << {
+        project.task("acceptancetest", dependsOn: [ project.tasks.buildApplication, project.tasks.verifyCucumber ]) << {
             project.convention.plugins.cedarGwtOnGae.killDevmode()
             project.convention.plugins.cedarGwtOnGae.bootDevmode()
             project.convention.plugins.cedarGwtOnGae.waitForDevmode()

@@ -50,8 +50,6 @@ class CedarCucumberPluginConvention {
      * See: http://jeannotsweblog.blogspot.com/2013/02/cucumber-10-command-line.html
      */
     def execCucumber(String name, String feature) {
-        verifyCucumberInstall()
-
         def command = [ project.cedarCucumber.getCucumberPath(), "--require", project.cedarCucumber.getRubySubdir(), ]
 
         if (name != null) {
