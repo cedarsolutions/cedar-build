@@ -1,3 +1,7 @@
+Version 0.8.7   27 Oct 2013
+
+   * Change Cucumber so the very slow verify step is only done when running all tests.
+
 Version 0.8.6   26 Oct 2013
 
    * Refactor a lot of GWT, test suite, and Cucumber stuff into cedarGwtGae and cedarCucumber.
