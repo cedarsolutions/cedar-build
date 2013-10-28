@@ -1,3 +1,7 @@
+Version 0.8.8   unreleased
+
+   * Work around problems with Java 1.6 and Selenium with JRuby, by forcing IPv4.
+
 Version 0.8.7   27 Oct 2013
 
    * Change Cucumber so the very slow verify step is only done when running all tests.
