@@ -116,7 +116,7 @@ class CedarCucumberPluginExtension {
     }
 
     /** Indicates whether the Ruby interpreter is JRuby. */
-    String isJRuby() {
+    boolean isJRuby() {
         return getRubyPath().contains("jruby")
     }
 
