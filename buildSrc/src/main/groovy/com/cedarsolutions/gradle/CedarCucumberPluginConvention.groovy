@@ -50,7 +50,12 @@ class CedarCucumberPluginConvention {
      * See: http://jeannotsweblog.blogspot.com/2013/02/cucumber-10-command-line.html
      */
     def execCucumber(String name, String feature) {
-        def command = [ project.cedarCucumber.getCucumberPath(), "--require", project.cedarCucumber.getRubySubdir(), ]
+        def command = []
+        if (project.cedarCucumber.isJRuby()) {
+            command += [ "-J-Djava.net.preferIPv4Stack=true", ]  # http://stackoverflow.com/questions/10983307/jruby-watir-is-hanging-when-launching-browser
+        }
+
+        command += [ project.cedarCucumber.getCucumberPath(), "--require", project.cedarCucumber.getRubySubdir(), ]
 
         if (name != null) {
             command += "--name"

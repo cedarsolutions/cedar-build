@@ -115,7 +115,12 @@ class CedarCucumberPluginExtension {
         return cucumberVersion != null && cucumberVersion instanceof Callable ? cucumberVersion.call() : cucumberVersion
     }
 
-    /** Get the path to the ruby executable. */
+    /** Indicates whether the Ruby interpreter is JRuby. */
+    String isJRuby() {
+        return getRubyPath().contains("jruby")
+    }
+
+    /** Get the path to the Ruby interpreter. */
     String getRubyPath() {
         if (isWindows()) {
             if (project.file(getRubyInstallDir() + "/bin/jruby.exe").exists()) {
