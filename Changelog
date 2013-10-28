@@ -1,4 +1,4 @@
-Version 0.8.8   unreleased
+Version 0.8.8   28 Oct 2013
 
    * Work around problems with Java 1.6 and Selenium with JRuby, by forcing IPv4.
 
