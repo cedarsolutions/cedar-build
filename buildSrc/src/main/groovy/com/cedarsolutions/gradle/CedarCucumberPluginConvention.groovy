@@ -51,8 +51,12 @@ class CedarCucumberPluginConvention {
      */
     def execCucumber(String name, String feature) {
         def command = []
+
         if (project.cedarCucumber.isJRuby()) {
-            command += [ "-J-Djava.net.preferIPv4Stack=true", ]  // http://stackoverflow.com/questions/10983307/jruby-watir-is-hanging-when-launching-browser
+            // Work around problems with the 1.6 JVM and Selenium with JRuby.
+            // Without this option set, Selenium hangs forever trying to open Firefox.
+            // See: http://stackoverflow.com/questions/10983307/jruby-watir-is-hanging-when-launching-browser
+            command += [ "-J-Djava.net.preferIPv4Stack=true", ]  
         }
 
         command += [ project.cedarCucumber.getCucumberPath(), "--require", project.cedarCucumber.getRubySubdir(), ]
