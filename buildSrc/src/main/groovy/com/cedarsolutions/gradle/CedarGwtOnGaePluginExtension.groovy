@@ -55,6 +55,12 @@ class CedarGwtOnGaePluginExtension {
     /** Amount of memory to give the GWT compiler, like "256M". */
     def gwtCompilerMemory
 
+    /** Amount of memory to give the unit tests, like "512M". */
+    def unittestMemory
+
+    /** Amount of memory to give the client tests, like "512M". */
+    def clienttestMemory
+
     /** Port to be used for HTTP traffic */
     def devmodeServerPort
 
@@ -88,6 +94,16 @@ class CedarGwtOnGaePluginExtension {
     /** Get gwtCompilerMemory, accounting for closures. */
     String getGwtCompilerMemory() {
         return gwtCompilerMemory != null && gwtCompilerMemory instanceof Callable ? gwtCompilerMemory.call() : gwtCompilerMemory
+    }
+
+    /** Get unittestMemory, accounting for closures. */
+    String getUnitTestMemory() {
+        return unittestMemory != null && unittestMemory instanceof Callable ? unittestMemory.call() : unittestMemory
+    }
+
+    /** Get clienttestMemory, accounting for closures. */
+    String getClientTestMemory() {
+        return clienttestMemory != null && clienttestMemory instanceof Callable ? clienttestMemory.call() : clienttestMemory
     }
 
     /** Get devmodeServerPort, accounting for closures. */
