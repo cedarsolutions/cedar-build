@@ -1,3 +1,7 @@
+Version 0.8.9   unreleased
+
+   * Add customized TestTask and modify CedarGaeOnGwt to allow configuration of heap for tests.
+
 Version 0.8.8   28 Oct 2013
 
    * Work around problems with Java 1.6 and Selenium with JRuby, by forcing IPv4.

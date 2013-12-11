@@ -185,30 +185,43 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
 
         // Run unit tests, assumed to be found in a class suites/UnitTestSuite.
         // The caller that applies this plugin still has responsibility for making sure the suite gets compiled.
-        project.task("unittest", type: org.gradle.api.tasks.testing.Test) {
+        project.task("unittest", type: com.cedarsolutions.gradle.TestTask) {
+
+            // these configuration values are set when the task is created
             workingDir = project.projectDir
             scanForTestClasses = false
             enableAssertions = false
             outputs.upToDateWhen { false }
             include "suites/UnitTestSuite.class"
+
+            // these configuration values are set immediately before the test is executed
+            deferredConfig {
+                setMaxHeapSize(project.cedarGwtOnGae.getUnitTestMemory())
+            }
+
         }
 
         // Run GWT client tests, assumed to be found in a class suites/ClientTestSuite.
         // The caller that applies this plugin still has responsibility for making sure the suite gets compiled.
-        project.task("clienttest", type: org.gradle.api.tasks.testing.Test) {
+        project.task("clienttest", type: com.cedarsolutions.gradle.TestTask) {
+
+            // these configuration values are set when the task is created
             workingDir = project.projectDir
             scanForTestClasses = false
             scanForTestClasses = false
             enableAssertions = false
             outputs.upToDateWhen { false }
-
             systemProperty "gwt.args", "-out www-test -logLevel ERROR"
             systemProperty "java.awt.headless", "true"   // required on Linux to avoid deferred binding errors
-
             include "suites/ClientTestSuite.class"
 
+            // these configuration values are set immediately before the test is executed
+            deferredConfig {
+                setMaxHeapSize(project.cedarGwtOnGae.getClientTestMemory())
+            }
+
+            // delete the cache directories before running the suite
             beforeSuite { descriptor ->
-                // Ugh, this gets called several different times for different internal Gradle "suites"
                 if (descriptor.className == "suites.ClientTestSuite") {
                     def wwwTest = project.file(workingDir.canonicalPath + "/www-test")
                     def gwtCache = project.file(workingDir.canonicalPath + "/gwt-unitCache")
@@ -217,8 +230,8 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
                 }
             }
 
+            // delete the cache directories before running the suite
             afterSuite { descriptor ->
-                // Ugh, this gets called several different times for different internal Gradle "suites"
                 if (descriptor.className == "suites.ClientTestSuite") {
                     def wwwTest = project.file(workingDir.canonicalPath + "/www-test")
                     def gwtCache = project.file(workingDir.canonicalPath + "/gwt-unitCache")
@@ -247,6 +260,9 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
         // Define the order of tests if there are multiple called at the same time
         project.tasks.clienttest.mustRunAfter project.tasks.unittest
         project.tasks.acceptancetest.mustRunAfter project.tasks.clienttest
+
+        // Define a task that runs all of the tests
+        project.task("alltest", dependsOn: [ project.tasks.unittest, project.tasks.clienttest, project.tasks.acceptancetest ]);
     }
 
 }
