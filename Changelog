@@ -1,4 +1,4 @@
-Version 0.8.9   unreleased
+Version 0.8.9   11 Dec 2013
 
    * Add customized TestTask and modify CedarGaeOnGwt to allow configuration of heap for tests.
 
