@@ -53,6 +53,9 @@ group = "com.googlecode.cedar-common"
 def artifactId = "cedar-build"
 version = config_mavenPublishVersion
 
+sourceCompatibility = JavaVersion.VERSION_1_6
+targetCompatibility = JavaVersion.VERSION_1_6
+
 tasks.publish.dependsOn += [ label, ] 
 
 dependencies {
