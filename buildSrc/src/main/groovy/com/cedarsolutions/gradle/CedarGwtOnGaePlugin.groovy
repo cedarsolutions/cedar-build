@@ -230,7 +230,7 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
                 }
             }
 
-            // delete the cache directories before running the suite
+            // delete the cache directories after running the suite
             afterSuite { descriptor ->
                 if (descriptor.className == "suites.ClientTestSuite") {
                     def wwwTest = project.file(workingDir.canonicalPath + "/www-test")
