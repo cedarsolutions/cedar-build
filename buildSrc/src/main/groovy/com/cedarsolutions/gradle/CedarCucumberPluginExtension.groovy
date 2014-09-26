@@ -70,6 +70,9 @@ class CedarCucumberPluginExtension {
     /** Required version of Cucumber gem, possibly null. */
     def cucumberVersion = "1.3.8"
 
+    /** Get the Cucumber formatter to use, or null to use the default. */
+    def cucumberFormatter
+
     /** Get rubyInstallDir, accounting for closures. */
     String getRubyInstallDir() {
         return rubyInstallDir != null && rubyInstallDir instanceof Callable ? rubyInstallDir.call() : rubyInstallDir
@@ -113,6 +116,11 @@ class CedarCucumberPluginExtension {
     /** Get cucumberVersion, accounting for closures. */
     String getCucumberVersion() {
         return cucumberVersion != null && cucumberVersion instanceof Callable ? cucumberVersion.call() : cucumberVersion
+    }
+
+    /** Get cucumberFormatter, accounting for closures. */
+    String getCucumberFormatter() {
+        return cucumberFormatter != null && cucumberFormatter instanceof Callable ? cucumberFormatter.call() : cucumberFormatter
     }
 
     /** Indicates whether the Ruby interpreter is JRuby. */
