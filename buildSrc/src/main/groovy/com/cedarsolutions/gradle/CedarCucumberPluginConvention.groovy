@@ -57,6 +57,11 @@ class CedarCucumberPluginConvention {
             // Without this option set, Selenium hangs forever trying to open Firefox.
             // See: http://stackoverflow.com/questions/10983307/jruby-watir-is-hanging-when-launching-browser
             command += [ "-J-Djava.net.preferIPv4Stack=true", ]  
+
+            // Larger Cucumber test suites use more than the default 500 MB of memory in JRuby
+            if (project.cedarCucumber.getJrubyCucumberMemory() != null) {
+                command += [ "-J-Xmx" + project.cedarCucumber.getJrubyCucumberMemory(), ]
+            }
         }
 
         command += [ project.cedarCucumber.getCucumberPath(), "--require", project.cedarCucumber.getRubySubdir(), ]

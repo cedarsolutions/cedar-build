@@ -55,6 +55,9 @@ class CedarCucumberPluginExtension {
     /** Subdirectory (within cucumberDir) where Ruby code lives. */
     def rubySubdir
 
+    /** Amount of memory to give JRuby when running cucumber. */
+    def jrubyCucumberMemory;
+
     /** URL for JRuby. */
     def jrubyDownloadUrl = "http://jruby.org.s3.amazonaws.com/downloads/1.7.6/jruby-bin-1.7.6.tar.gz"
 
@@ -91,6 +94,11 @@ class CedarCucumberPluginExtension {
     /** Get rubySubdir, accounting for closures. */
     String getRubySubdir() {
         return rubySubdir != null && rubySubdir instanceof Callable ? rubySubdir.call() : rubySubdir
+    }
+
+    /** Get jrubyCucumberMemory, accounting for closures. */
+    String getJrubyCucumberMemory() {
+        return jrubyCucumberMemory != null && jrubyCucumberMemory instanceof Callable ? jrubyCucumberMemory.call() : jrubyCucumberMemory
     }
 
     /** Get jrubyDownloadUrl, accounting for closures. */

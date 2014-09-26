@@ -196,7 +196,10 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
 
             // these configuration values are set immediately before the test is executed
             deferredConfig {
+                // Note: it's important to add onto the JVM args rather than replace them.
+                // Otherwise, important arguments like the Jacoco coverage agent don't get included as expected.
                 setMaxHeapSize(project.cedarGwtOnGae.getUnitTestMemory())
+                setJvmArgs(getJvmArgs() + [ "-XX:MaxPermSize=" + project.cedarGwtOnGae.getUnitTestPermgen(), ])
             }
 
         }
@@ -217,7 +220,13 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
 
             // these configuration values are set immediately before the test is executed
             deferredConfig {
+                // Here, we *do* replace the JVM args, because this is apparently the only way
+                // to disable Jacoco on a test task.  Replacing the JVM arguments discards
+                // the -javaagent that Gradle adds into the list.  This is a big hammer approach,
+                // but it's clear from looking at the Gradle code that there's no way to configure
+                // the plugin to run for some test tasks and ignore others.  Poor design.
                 setMaxHeapSize(project.cedarGwtOnGae.getClientTestMemory())
+                setJvmArgs([ "-XX:MaxPermSize=" + project.cedarGwtOnGae.getClientTestPermgen(), ])
             }
 
             // delete the cache directories before running the suite
