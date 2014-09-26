@@ -1,6 +1,7 @@
 Version 0.8.10  unreleased
 
    * Use %n rather than \n in TestSummary.groovy.
+   * Catch number format exceptions when parsing server wait configuration.
 
 Version 0.8.9   11 Dec 2013
 

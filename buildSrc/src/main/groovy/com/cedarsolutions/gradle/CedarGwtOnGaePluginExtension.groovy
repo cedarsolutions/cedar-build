@@ -123,8 +123,12 @@ class CedarGwtOnGaePluginExtension {
 
     /** Get serverWait, accounting for closures. */
     Integer getServerWait() {
-        String result = serverWait != null && serverWait instanceof Callable ? serverWait.call() : serverWait
-        return result == null ? null : Integer.parseInt(result)
+        try {
+           String result = serverWait != null && serverWait instanceof Callable ? serverWait.call() : serverWait
+           return result == null ? null : Integer.parseInt(result.trim())
+        } catch (NumberFormatException e) {
+           throw new NumberFormatException("serverWait is not an integer: " + e.getMessage());
+        }
     }
 
     /** Get appEngineVersion, accounting for closures. */
