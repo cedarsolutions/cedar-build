@@ -6,6 +6,7 @@ Version 0.8.10  unreleased
    * Add configuration for memory and permgen space.
    * Add support for "analysis" like code metrics and coverage.
    * Support headless mode on Linux for the devmode server and Cucumber tests.
+   * Implement a two-pass mode for Cucumber, where failed tests are automatically retried.
 
 Version 0.8.9   11 Dec 2013
 
