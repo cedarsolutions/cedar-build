@@ -71,6 +71,10 @@ class CedarCucumberPluginConvention {
             command += project.cedarCucumber.getFeaturesSubdir()
         }
 
+        if (project.cedarCucumber.getCucumberFormatter() != null) {
+            command += [ "--format", project.cedarCucumber.getCucumberFormatter(), ]
+        }
+
         return project.exec {
             workingDir = project.cedarCucumber.getCucumberDir()
             ignoreExitValue = true
