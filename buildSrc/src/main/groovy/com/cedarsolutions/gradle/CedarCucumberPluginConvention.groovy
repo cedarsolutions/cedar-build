@@ -112,6 +112,7 @@ class CedarCucumberPluginConvention {
                 installGem("rspec", project.cedarCucumber.getRspecVersion())
                 installGem("capybara", project.cedarCucumber.getCapybaraVersion())
                 installGem("cucumber", project.cedarCucumber.getCucumberVersion())
+                installGem("headless", project.cedarCucumber.getHeadlessVersion())
                 verifyCucumberInstall()
                 project.logger.lifecycle("All Cucumber tooling has been installed.")
             }
@@ -191,6 +192,14 @@ class CedarCucumberPluginConvention {
                 def version = project.cedarCucumber.getCucumberVersion()
                 project.logger.warn("Cucumber tests might not work due to version mismatch; expected Cucumber ${version}, but got: " + cucumberVersion)
             } 
+        }
+
+        if (project.cedarCucumber.getHeadlessVersion() != null) {
+            def headlessVersion = getGemVersion("headless")
+            if (headlessVersion != project.cedarCucumber.getHeadlessVersion()) {
+                def version = project.cedarCucumber.getHeadlessVersion()
+                project.logger.warn("Cucumber tests might not work due to version mismatch; expected Headless ${version}, but got: " + headlessVersion)
+            }
         }
     }
 

@@ -73,6 +73,9 @@ class CedarCucumberPluginExtension {
     /** Required version of Cucumber gem, possibly null. */
     def cucumberVersion = "1.3.8"
 
+    /** Required version of Headless gem, possibly null. */
+    def headlessVersion = "1.0.1"
+
     /** Get the Cucumber formatter to use, or null to use the default. */
     def cucumberFormatter
 
@@ -124,6 +127,11 @@ class CedarCucumberPluginExtension {
     /** Get cucumberVersion, accounting for closures. */
     String getCucumberVersion() {
         return cucumberVersion != null && cucumberVersion instanceof Callable ? cucumberVersion.call() : cucumberVersion
+    }
+
+    /** Get headlessVersion, accounting for closures. */
+    String getHeadlessVersion() {
+        return headlessVersion != null && headlessVersion instanceof Callable ? headlessVersion.call() : headlessVersion
     }
 
     /** Get cucumberFormatter, accounting for closures. */

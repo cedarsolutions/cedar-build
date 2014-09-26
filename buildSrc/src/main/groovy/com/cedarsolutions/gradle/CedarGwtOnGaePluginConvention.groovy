@@ -26,6 +26,7 @@ package com.cedarsolutions.gradle
 import org.gradle.api.Project
 import org.gradle.api.InvalidUserDataException
 import org.apache.tools.ant.taskdefs.condition.Os
+import org.gradle.util.Jvm
 
 /**
  * Plugin convention for cedarGwtOnGae.
@@ -62,39 +63,72 @@ class CedarGwtOnGaePluginConvention {
 
     /** Boot the development mode server. */
     public void bootDevmode() {
+        def serverClass = "com.google.gwt.dev.DevMode"
+        def agentJar = getAppEngineAgentJar()
+        def launcher = "com.google.appengine.tools.development.gwt.AppEngineLauncher"
+
+        def xvfb = project.cedarGwtOnGae.getXvfbRunPath()
+        def java = Jvm.current().getJavaExecutable().canonicalPath
         def warDir = project.gaeExplodeWar.explodedWarDirectory.getPath()
+        def workingDir = warDir
         def cacheDir = project.file(warDir + "/WEB-INF/appengine-generated").canonicalPath
         def classesDir = project.file(warDir + "/WEB-INF/classes").canonicalPath
-        def libDir = project.file(warDir + "/WEB-INF/lib").canonicalPath
-        def agentJar = getAppEngineAgentJar()
-        def serverClass = "com.google.gwt.dev.DevMode"
-        def launcher = "com.google.appengine.tools.development.gwt.AppEngineLauncher"
+        def libDir = project.file(warDir + "/WEB-INF/lib")
+
+        def libJars = libDir.listFiles().findAll { it.name.endsWith(".jar") }.collect().sort()
+        def devmodeJars = project.configurations.devmodeRuntime.each { jar -> jar.canonicalPath }.collect()
+        def runtimeJars = project.configurations.providedRuntime.each { jar -> jar.canonicalPath }.collect()
+        def sourceDirs = project.sourceSets.main.java.srcDirs.each { dir -> dir }.collect()
+        def classpath = (libJars + [ classesDir, ] + devmodeJars + runtimeJars + sourceDirs).join(isWindows() ? ";" : ":")
 
         project.file(cacheDir).deleteDir()  // clean up the database every time the server is rebooted
 
-        project.ant.java(classname: serverClass, dir: warDir, fork: "true", spawn: "true") {
-            jvmarg(value: "-javaagent:" + agentJar)
-            jvmarg(value: "-Xmx" + project.cedarGwtOnGae.getDevmodeServerMemory())
-            jvmarg(value: "-XX:MaxPermSize=" + project.cedarGwtOnGae.getDevmodeServerPermgen())
-            arg(line: "-startupUrl")
-            arg(value: project.cedarGwtOnGae.getAppStartupUrl())
-            arg(line: "-war")
-            arg(value: warDir)
-            arg(line: "-logLevel")
-            arg(value: "INFO")
-            arg(line: "-codeServerPort")
-            arg(value: project.cedarGwtOnGae.getDevmodeCodeserverPort())
-            arg(line: "-port")
-            arg(value: project.cedarGwtOnGae.getDevmodeServerPort())
-            arg(line: "-server")
-            arg(line: launcher)
-            arg(value: project.cedarGwtOnGae.getAppEntryPoint())
-            classpath() {
-                fileset(dir: libDir, includes : "*.jar")
-                pathelement(location: classesDir)
-                project.configurations.devmodeRuntime.each { jar -> pathelement(location: jar.canonicalPath) }
-                project.configurations.providedRuntime.each { jar -> pathelement(location: jar.canonicalPath) }
-                project.sourceSets.main.java.srcDirs.each { dir -> pathelement(location: dir) }
+        if (project.cedarGwtOnGae.getIsHeadlessModeAvailable()) {
+            project.ant.exec(executable: xvfb, dir: workingDir, spawn: true) {
+                arg(value: "--auto-servernum")
+                arg(value: "--server-num=300")
+                arg(value: java)
+                arg(value: "-javaagent:" + agentJar)
+                arg(value: "-Xmx" + project.cedarGwtOnGae.getDevmodeServerMemory())
+                arg(value: "-XX:MaxPermSize=" + project.cedarGwtOnGae.getDevmodeServerPermgen())
+                arg(line: "-classpath")
+                arg(value: classpath)
+                arg(value: serverClass)
+                arg(line: "-startupUrl")
+                arg(value: project.cedarGwtOnGae.getAppStartupUrl())
+                arg(line: "-war")
+                arg(value: warDir)
+                arg(line: "-logLevel")
+                arg(value: "INFO")
+                arg(line: "-codeServerPort")
+                arg(value: project.cedarGwtOnGae.getDevmodeCodeserverPort())
+                arg(line: "-port")
+                arg(value: project.cedarGwtOnGae.getDevmodeServerPort())
+                arg(line: "-server")
+                arg(line: launcher)
+                arg(value: project.cedarGwtOnGae.getAppEntryPoint())
+            }
+        } else {
+            project.ant.exec(executable: java, dir: workingDir, spawn: true) {
+                arg(value: "-javaagent:" + agentJar)
+                arg(value: "-Xmx" + project.cedarGwtOnGae.getDevmodeServerMemory())
+                arg(value: "-XX:MaxPermSize=" + project.cedarGwtOnGae.getDevmodeServerPermgen())
+                arg(line: "-classpath")
+                arg(value: classpath)
+                arg(value: serverClass)
+                arg(line: "-startupUrl")
+                arg(value: project.cedarGwtOnGae.getAppStartupUrl())
+                arg(line: "-war")
+                arg(value: warDir)
+                arg(line: "-logLevel")
+                arg(value: "INFO")
+                arg(line: "-codeServerPort")
+                arg(value: project.cedarGwtOnGae.getDevmodeCodeserverPort())
+                arg(line: "-port")
+                arg(value: project.cedarGwtOnGae.getDevmodeServerPort())
+                arg(line: "-server")
+                arg(line: launcher)
+                arg(value: project.cedarGwtOnGae.getAppEntryPoint())
             }
         }
     }
