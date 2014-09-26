@@ -1,3 +1,7 @@
+Version 0.8.10  unreleased
+
+   * Use %n rather than \n in TestSummary.groovy.
+
 Version 0.8.9   11 Dec 2013
 
    * Add customized TestTask and modify CedarGaeOnGwt to allow configuration of heap for tests.
