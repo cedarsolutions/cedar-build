@@ -58,8 +58,14 @@ class CedarGwtOnGaePluginExtension {
     /** Amount of memory to give the unit tests, like "512M". */
     def unittestMemory
 
+    /** Amount of permgen space to give the unit tests, like "128M". */
+    def unittestPermgen
+
     /** Amount of memory to give the client tests, like "512M". */
     def clienttestMemory
+
+    /** Amount of permgen space to give the client tests, like "128M". */
+    def clienttestPermgen
 
     /** Port to be used for HTTP traffic */
     def devmodeServerPort
@@ -69,6 +75,9 @@ class CedarGwtOnGaePluginExtension {
 
     /** Amount of memory to give the devmode server, like "512M". */
     def devmodeServerMemory
+
+    /** Amount of permgen space to give the devmode server, like "128M". */
+    def devmodeServerPermgen
 
     /** Expected boot time for the server, in seconds. */
     def serverWait
@@ -101,9 +110,19 @@ class CedarGwtOnGaePluginExtension {
         return unittestMemory != null && unittestMemory instanceof Callable ? unittestMemory.call() : unittestMemory
     }
 
+    /** Get unittestPermgen, accounting for closures. */
+    String getUnitTestPermgen() {
+        return unittestPermgen != null && unittestPermgen instanceof Callable ? unittestPermgen.call() : unittestPermgen
+    }
+
     /** Get clienttestMemory, accounting for closures. */
     String getClientTestMemory() {
         return clienttestMemory != null && clienttestMemory instanceof Callable ? clienttestMemory.call() : clienttestMemory
+    }
+
+    /** Get clienttestPermgen, accounting for closures. */
+    String getClientTestPermgen() {
+        return clienttestPermgen != null && clienttestPermgen instanceof Callable ? clienttestPermgen.call() : clienttestPermgen
     }
 
     /** Get devmodeServerPort, accounting for closures. */
@@ -119,6 +138,11 @@ class CedarGwtOnGaePluginExtension {
     /** Get devmodeServerMemory, accounting for closures. */
     String getDevmodeServerMemory() {
         return devmodeServerMemory != null && devmodeServerMemory instanceof Callable ? devmodeServerMemory.call() : devmodeServerMemory
+    }
+
+    /** Get devmodeServerPermgen, accounting for closures. */
+    String getDevmodeServerPermgen() {
+        return devmodeServerPermgen != null && devmodeServerPermgen instanceof Callable ? devmodeServerPermgen.call() : devmodeServerPermgen
     }
 
     /** Get serverWait, accounting for closures. */
@@ -164,6 +188,10 @@ class CedarGwtOnGaePluginExtension {
 
         if (getDevmodeServerMemory() == null || getDevmodeServerMemory() == "unset") {
             throw new InvalidUserDataException("GWT error: devmodeServerMemory is unset")
+        }
+
+        if (getDevmodeServerPermgen() == null || getDevmodeServerPermgen() == "unset") {
+            throw new InvalidUserDataException("GWT error: devmodeServerPermgen is unset")
         }
 
         if (getDevmodeServerMemory() == null || getDevmodeServerMemory() == "unset") {

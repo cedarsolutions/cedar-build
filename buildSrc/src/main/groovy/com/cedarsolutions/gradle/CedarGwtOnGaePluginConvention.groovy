@@ -73,8 +73,9 @@ class CedarGwtOnGaePluginConvention {
         project.file(cacheDir).deleteDir()  // clean up the database every time the server is rebooted
 
         project.ant.java(classname: serverClass, dir: warDir, fork: "true", spawn: "true") {
-            jvmarg(value: "-Xmx" + project.cedarGwtOnGae.getDevmodeServerMemory())
             jvmarg(value: "-javaagent:" + agentJar)
+            jvmarg(value: "-Xmx" + project.cedarGwtOnGae.getDevmodeServerMemory())
+            jvmarg(value: "-XX:MaxPermSize=" + project.cedarGwtOnGae.getDevmodeServerPermgen())
             arg(line: "-startupUrl")
             arg(value: project.cedarGwtOnGae.getAppStartupUrl())
             arg(line: "-war")
