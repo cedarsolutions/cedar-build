@@ -149,7 +149,7 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
         // Run the Cucumber tests, assuming the devmode server is already up
         // Note that you have to manually build the application and boot devmode for this to work
         project.task("runCucumber", dependsOn: project.tasks.verifyCucumber) << {
-            project.convention.plugins.cedarCucumber.execCucumber(null, null).assertNormalExitValue()
+            project.convention.plugins.cedarCucumber.execCucumber("single-pass", null, null).assertNormalExitValue()
         }
 
         // Run the Cucumber tests, including a reboot of the server
@@ -157,7 +157,7 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
         project.task("runCucumberWithReboot", dependsOn: project.tasks.verifyCucumber) << {
             project.convention.plugins.cedarGwtOnGae.rebootDevmode()
             project.convention.plugins.cedarGwtOnGae.waitForDevmode()
-            project.convention.plugins.cedarCucumber.execCucumber(null, null).assertNormalExitValue()
+            project.convention.plugins.cedarCucumber.execCucumber("single-pass", null, null).assertNormalExitValue()
         }
 
         // Run the Cucumber tests, restricting by name containing a substring, assuming the devmode server is already up
@@ -166,7 +166,7 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
         project.task("runCucumberByName") << {
             def name = null
             project.convention.plugins.cedarBuild.getInput("Configure Cucumber", "Test Name", false, { input -> name = input})
-            project.convention.plugins.cedarCucumber.execCucumber(name, null).assertNormalExitValue()
+            project.convention.plugins.cedarCucumber.execCucumber("single-pass", name, null).assertNormalExitValue()
         }
 
         // Run the Cucumber tests for a specific feature file, assuming the devmode server is already up
@@ -175,7 +175,7 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
         project.task("runCucumberByFeature") << {
             def feature = null
             project.convention.plugins.cedarBuild.getInput("Configure Cucumber", "Feature Path", false, { input -> feature = input})
-            project.convention.plugins.cedarCucumber.execCucumber(null, feature).assertNormalExitValue()
+            project.convention.plugins.cedarCucumber.execCucumber("single-pass", null, feature).assertNormalExitValue()
         }
 
     }
@@ -252,10 +252,35 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
 
         // Run the acceptance tests, including a build of the application
         project.task("acceptancetest", dependsOn: [ project.tasks.buildApplication, project.tasks.verifyCucumber ]) << {
+            // This runs Cucumber in a two-pass mode: the first pass runs all
+            // of the tests and builds a list of the ones that failed, and the
+            // second pass re-runs only the failed tests.  This is designed to
+            // deal a little more robustly with the intermittent, non-deterministic
+            // test failures that pop-up with some regularity as the test suite
+            // gets larger.
+            //
+            // This is not a perfect solution.  Arguably, we'd rather have an
+            // explanation for why the tests fail in the first place.  However,
+            // since the acceptance test suite is mostly supposed to be a smoke
+            // test, we're going to live with it.  The goal with these tests is
+            // to give us some confidence that the application is pretty much
+            // working, and that goal is better served by ignoring tests that
+            // work on retry vs. being overly noisly about failures that
+            // "magically" go away when someone tries them again.
+
+            // First pass
             project.convention.plugins.cedarGwtOnGae.killDevmode()
+            project.convention.plugins.cedarGwtOnGae.waitForDevmode()
             project.convention.plugins.cedarGwtOnGae.bootDevmode()
             project.convention.plugins.cedarGwtOnGae.waitForDevmode()
-            def result = project.convention.plugins.cedarCucumber.execCucumber(null, null)
+            project.convention.plugins.cedarCucumber.execCucumber("first-pass", null, null)
+
+            // Second pass
+            project.convention.plugins.cedarGwtOnGae.killDevmode()
+            project.convention.plugins.cedarGwtOnGae.waitForDevmode()
+            project.convention.plugins.cedarGwtOnGae.bootDevmode()
+            project.convention.plugins.cedarGwtOnGae.waitForDevmode()
+            def result = project.convention.plugins.cedarCucumber.execCucumber("second-pass", null, null)
             project.convention.plugins.cedarGwtOnGae.killDevmode()
             result.assertNormalExitValue()
         }

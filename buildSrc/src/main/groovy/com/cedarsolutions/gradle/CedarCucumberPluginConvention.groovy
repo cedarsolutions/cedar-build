@@ -45,18 +45,32 @@ class CedarCucumberPluginConvention {
      * Execute the cucumber tests, returning an ExecResult so caller can handle failures.
      * If you want the database to start over fresh, you need to reboot dev mode.
      * You can optionally provide either name or feature, but not both.
-     * @param name     Specific name of a test, or a substring, as for the Cucumber --name option
-     * @param feature  Path to a specific feature to execute, relative to the acceptance/cucumber directory
+     * @param mode      The mode to run in, either "single-pass", "first-pass" or "second-pass"
+     * @param name      Specific name of a test, or a substring, as for the Cucumber --name option
+     * @param feature   Path to a specific feature to execute, relative to the acceptance/cucumber directory
      * See: http://jeannotsweblog.blogspot.com/2013/02/cucumber-10-command-line.html
      */
-    def execCucumber(String name, String feature) {
+    def execCucumber(String mode, String name, String feature) {
         def command = []
+        def rerunEnabled = false
+        def rerunFile = project.file(project.projectDir.canonicalPath + "/build/tmp/rerun.txt").canonicalPath
+        def reportDir = project.file(project.projectDir.canonicalPath + "/build/reports/cucumber").canonicalPath
+        def firstPass = project.file(reportDir + "/first-pass.json").canonicalPath
+        def secondPass = project.file(reportDir + "/second-pass.json").canonicalPath
+
+        if ("single-pass".equals(mode)) {
+            println("\r\nExecuting Cucumber acceptance tests, single-pass mode")
+        } else if ("first-pass".equals(mode)) {
+            println("\r\nExecuting Cucumber acceptance tests, pass 1 of 2")
+        } else if ("second-pass".equals(mode)) {
+            println("\r\nExecuting Cucumber acceptance tests, pass 2 of 2 (retry failed tests)")
+        }
 
         if (project.cedarCucumber.isJRuby()) {
             // Work around problems with the 1.6 JVM and Selenium with JRuby.
             // Without this option set, Selenium hangs forever trying to open Firefox.
             // See: http://stackoverflow.com/questions/10983307/jruby-watir-is-hanging-when-launching-browser
-            command += [ "-J-Djava.net.preferIPv4Stack=true", ]  
+            command += [ "-J-Djava.net.preferIPv4Stack=true", ]
 
             // Larger Cucumber test suites use more than the default 500 MB of memory in JRuby
             if (project.cedarCucumber.getJrubyCucumberMemory() != null) {
@@ -64,27 +78,57 @@ class CedarCucumberPluginConvention {
             }
         }
 
-        command += [ project.cedarCucumber.getCucumberPath(), "--require", project.cedarCucumber.getRubySubdir(), ]
-
-        if (name != null) {
-            command += "--name"
-            command += name.replaceAll('"', "")  // quotes cause problems, so just remove them and the test won't be found
-            command += project.cedarCucumber.getFeaturesSubdir()
-        } else if (feature != null) {
-            command += project.cedarCucumber.getFeaturesSubdir() + "/" + feature
-        } else {
-            command += project.cedarCucumber.getFeaturesSubdir()
-        }
+        command += [ project.cedarCucumber.getCucumberPath(), ]
+        command += [ "--require", project.cedarCucumber.getRubySubdir(), ]
 
         if (project.cedarCucumber.getCucumberFormatter() != null) {
             command += [ "--format", project.cedarCucumber.getCucumberFormatter(), ]
         }
 
-        return project.exec {
-            workingDir = project.cedarCucumber.getCucumberDir()
-            ignoreExitValue = true
-            executable = project.cedarCucumber.getRubyPath()
-            args = command
+        project.file(reportDir).mkdirs()
+
+        // We need to make sure that at the end of the run, only one result is left, the one
+        // for the latest attempt.  Otherwise, the Jenkins Cucumber plugin might notice a
+        // failure in one of the other files and fail the entire build. 
+        project.file(firstPass).delete()
+        project.file(secondPass).delete()
+
+        if ("first-pass".equals(mode)) {
+            rerunEnabled = true
+            project.file(rerunFile).delete()
+        }
+
+        if ("second-pass".equals(mode)) {
+            command += [ "@" + rerunFile, ]
+            command += [ "--format", "json", "--out", secondPass, ]
+        } else {
+            command += [ "--format", "json", "--out", firstPass, ]
+            if (name != null) {
+                command += "--name"
+                command += name.replaceAll('"', "")  // quotes cause problems, so just remove them and the test won't be found
+                command += project.cedarCucumber.getFeaturesSubdir()
+            } else if (feature != null) {
+                command += project.cedarCucumber.getFeaturesSubdir() + "/" + feature
+            } else {
+                command += project.cedarCucumber.getFeaturesSubdir()
+            }
+        }
+
+        if (rerunEnabled) {
+            return project.exec {
+                workingDir = project.cedarCucumber.getCucumberDir()
+                ignoreExitValue = true
+                environment RERUN_FILE: rerunFile
+                executable = project.cedarCucumber.getRubyPath()
+                args = command
+            }
+        } else {
+            return project.exec {
+                workingDir = project.cedarCucumber.getCucumberDir()
+                ignoreExitValue = true
+                executable = project.cedarCucumber.getRubyPath()
+                args = command
+            }
         }
     }
 
@@ -104,9 +148,8 @@ class CedarCucumberPluginConvention {
             project.logger.error("Project is configured to use Ruby from: " + project.cedarCucumber.getRubyInstallDir())
             throw new InvalidUserDataException("Before running installing Cucumber, re-configure project to use tools/cucumber")
         } else {
-            if (project.file(project.cedarCucumber.getRubyInstallDir()).exists()) {
-                throw new InvalidUserDataException("Cucumber is already installed.  To reinstall, use 'gradle reinstallCucumber'.")
-            } else {
+            // Only install if it's not there.  That way, we can always use installCucumber from continuous integration.
+            if (!project.file(project.cedarCucumber.getRubyInstallDir()).exists()) {
                 installJRuby(project.cedarCucumber.getJRubyDownloadUrl())
                 installGem("selenium-webdriver", project.cedarCucumber.getSeleniumVersion())
                 installGem("rspec", project.cedarCucumber.getRspecVersion())
