@@ -85,6 +85,9 @@ class CedarGwtOnGaePluginExtension {
     /** The version of Google App Engine. */
     def appEngineVersion
 
+    /** Location of the xvfb-run script used for headless test runs on UNIX systems. */
+    def xvfbRunPath
+
     /** Get appModuleName, accounting for closures. */
     String getAppModuleName() {
         return appModuleName != null && appModuleName instanceof Callable ? appModuleName.call() : appModuleName
@@ -160,6 +163,16 @@ class CedarGwtOnGaePluginExtension {
         return appEngineVersion != null && appEngineVersion instanceof Callable ? appEngineVersion.call() : appEngineVersion
     }
 
+    /** Get xvfbRunPath, accounting for closures. */
+    String getXvfbRunPath() {
+        return xvfbRunPath != null && xvfbRunPath instanceof Callable ? xvfbRunPath.call() : xvfbRunPath
+    }
+
+    /** Whether headless mode is available. */
+    boolean getIsHeadlessModeAvailable() {
+        return !isWindows() && getXvfbRunPath() != null && getXvfbRunPath().length() != 0;
+    }
+
     /** Validate the GWT configuration. */
     def validateGwtConfig() {
         if (getAppModuleName() == null || getAppModuleName() == "unset") {
@@ -197,6 +210,10 @@ class CedarGwtOnGaePluginExtension {
         if (getDevmodeServerMemory() == null || getDevmodeServerMemory() == "unset") {
             throw new InvalidUserDataException("GWT error: devmodeServerMemory is unset")
         }
+    }
+
+    private boolean isWindows() {
+        return Os.isFamily(Os.FAMILY_WINDOWS);
     }
 
 }
