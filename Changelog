@@ -4,6 +4,7 @@ Version 0.8.10  unreleased
    * Catch number format exceptions when parsing server wait configuration.
    * Support custom formatters for Cucumber output.
    * Add configuration for memory and permgen space.
+   * Add support for "analysis" like code metrics and coverage.
 
 Version 0.8.9   11 Dec 2013
 
