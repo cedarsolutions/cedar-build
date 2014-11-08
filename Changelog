@@ -1,3 +1,7 @@
+Version 0.8.11  08 Nov 2014
+
+   * Update CedarGwtOnGae to understand new GWT 2.7.0-rc1's -noSuperDevMode flag in dev mode.
+
 Version 0.8.10  26 Sep 2014
 
    * Use %n rather than \n in TestSummary.groovy.
