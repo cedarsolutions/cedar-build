@@ -81,6 +81,9 @@ class CedarGwtOnGaePluginExtension {
 
     /** Expected boot time for the server, in seconds. */
     def serverWait
+
+    /** Whether the project uses a GWT version of 2.7.0-rc1 or newer. */
+    def postGwt27
    
     /** The version of Google App Engine. */
     def appEngineVersion
@@ -156,6 +159,12 @@ class CedarGwtOnGaePluginExtension {
         } catch (NumberFormatException e) {
            throw new NumberFormatException("serverWait is not an integer: " + e.getMessage());
         }
+    }
+
+    /** Get gwtVersion, accounting for closures. */
+    boolean isPostGwt27() {
+        def value = postGwt27 != null && postGwt27 instanceof Callable ? postGwt27.call() : postGwt27
+        return value == null ? false : value
     }
 
     /** Get appEngineVersion, accounting for closures. */

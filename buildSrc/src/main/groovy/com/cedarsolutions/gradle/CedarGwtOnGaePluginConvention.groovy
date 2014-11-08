@@ -81,6 +81,8 @@ class CedarGwtOnGaePluginConvention {
         def sourceDirs = project.sourceSets.main.java.srcDirs.each { dir -> dir }.collect()
         def classpath = (libJars + [ classesDir, ] + devmodeJars + runtimeJars + sourceDirs).join(isWindows() ? ";" : ":")
 
+        def noSuperDevMode = project.cedarGwtOnGae.isPostGwt27() ? "-nosuperDevMode" : "";
+
         project.file(cacheDir).deleteDir()  // clean up the database every time the server is rebooted
 
         if (project.cedarGwtOnGae.getIsHeadlessModeAvailable()) {
@@ -100,6 +102,7 @@ class CedarGwtOnGaePluginConvention {
                 arg(value: warDir)
                 arg(line: "-logLevel")
                 arg(value: "INFO")
+                arg(line: noSuperDevMode)
                 arg(line: "-codeServerPort")
                 arg(value: project.cedarGwtOnGae.getDevmodeCodeserverPort())
                 arg(line: "-port")
@@ -122,6 +125,7 @@ class CedarGwtOnGaePluginConvention {
                 arg(value: warDir)
                 arg(line: "-logLevel")
                 arg(value: "INFO")
+                arg(line: noSuperDevMode)
                 arg(line: "-codeServerPort")
                 arg(value: project.cedarGwtOnGae.getDevmodeCodeserverPort())
                 arg(line: "-port")
