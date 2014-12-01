@@ -1,4 +1,4 @@
-Version 0.8.12  unreleased
+Version 0.8.12  01 Dec 2014
 
    * Update the devmode boot process to account for changes in GWT 2.7.0 relative to RC1.
 
