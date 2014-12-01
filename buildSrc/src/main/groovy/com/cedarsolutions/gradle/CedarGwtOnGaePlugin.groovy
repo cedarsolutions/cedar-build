@@ -156,7 +156,6 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
         // Note that you have to manually build the application for this to work
         project.task("runCucumberWithReboot", dependsOn: project.tasks.verifyCucumber) << {
             project.convention.plugins.cedarGwtOnGae.rebootDevmode()
-            project.convention.plugins.cedarGwtOnGae.waitForDevmode()
             project.convention.plugins.cedarCucumber.execCucumber("single-pass", null, null).assertNormalExitValue()
         }
 
@@ -269,17 +268,11 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
             // "magically" go away when someone tries them again.
 
             // First pass
-            project.convention.plugins.cedarGwtOnGae.killDevmode()
-            project.convention.plugins.cedarGwtOnGae.waitForDevmode()
-            project.convention.plugins.cedarGwtOnGae.bootDevmode()
-            project.convention.plugins.cedarGwtOnGae.waitForDevmode()
+            project.convention.plugins.cedarGwtOnGae.rebootDevmode()
             project.convention.plugins.cedarCucumber.execCucumber("first-pass", null, null)
 
             // Second pass
-            project.convention.plugins.cedarGwtOnGae.killDevmode()
-            project.convention.plugins.cedarGwtOnGae.waitForDevmode()
-            project.convention.plugins.cedarGwtOnGae.bootDevmode()
-            project.convention.plugins.cedarGwtOnGae.waitForDevmode()
+            project.convention.plugins.cedarGwtOnGae.rebootDevmode()
             def result = project.convention.plugins.cedarCucumber.execCucumber("second-pass", null, null)
             project.convention.plugins.cedarGwtOnGae.killDevmode()
             result.assertNormalExitValue()
