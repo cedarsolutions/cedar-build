@@ -27,6 +27,14 @@ import org.gradle.api.Project
 import org.gradle.api.InvalidUserDataException
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.util.Jvm
+import java.nio.file.WatchService;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchEvent;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.FileSystems;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Plugin convention for cedarGwtOnGae.
@@ -84,6 +92,7 @@ class CedarGwtOnGaePluginConvention {
         def noSuperDevMode = project.cedarGwtOnGae.isPostGwt27() ? "-nosuperDevMode" : "";
 
         project.file(cacheDir).deleteDir()  // clean up the database every time the server is rebooted
+        archiveApplicationJavascript()
 
         if (project.cedarGwtOnGae.getIsHeadlessModeAvailable()) {
             project.ant.exec(executable: xvfb, dir: workingDir, spawn: true) {
@@ -135,6 +144,8 @@ class CedarGwtOnGaePluginConvention {
                 arg(value: project.cedarGwtOnGae.getAppEntryPoint())
             }
         }
+
+        restoreApplicationJavascript()
     }
 
     /** Kill the development mode server. */
@@ -177,12 +188,98 @@ class CedarGwtOnGaePluginConvention {
     /** Reboot devmode, stopping and then starting it. */
     public void rebootDevmode() {
         project.convention.plugins.cedarGwtOnGae.killDevmode()
+        sleep project.cedarGwtOnGae.getStopWait()
         project.convention.plugins.cedarGwtOnGae.bootDevmode()
     }
 
-    /** Wait for devmode to start, based on configuration. */
-    def waitForDevmode() {
-        sleep project.cedarGwtOnGae.getServerWait() * 1000;  // wait for dev mode to finish booting
+    /** Archive off application Javascript files for safe-keeping. */
+    private void archiveApplicationJavascript() {
+        // See discussion below in restoreApplicationJavascript() regarding why this is necessary
+
+        def warDir = project.gaeExplodeWar.explodedWarDirectory.getPath()
+        def sourceDir = project.file(warDir + "/" + project.cedarGwtOnGae.getAppModuleName()).canonicalPath
+        def archiveDir = project.file(project.projectDir.canonicalPath + "/build/tmp/javascript-archive").canonicalPath
+        def nocacheJs = project.cedarGwtOnGae.getAppModuleName() + ".nocache.js"
+        def devmodeJs = project.cedarGwtOnGae.getAppModuleName() + ".devmode.js"
+
+        project.file(archiveDir).deleteDir()
+        project.file(archiveDir).mkdirs()
+        project.ant.copy(todir: archiveDir, overwrite: true, force: true) {
+            fileset(dir: sourceDir) {
+                include(name: nocacheJs)
+                include(name: devmodeJs)
+            }
+        }
+    }
+
+   /** Restore archived application Javascript files. */
+    private void restoreApplicationJavascript() {
+
+        // GWT 2.7.0 changed the boot behavior for dev mode, relative to all previous versions
+        // of GWT.  Any existing <app>.nocache.js file gets replaced when the server boots.
+        // This breaks the application, and every URL gives the error "GWT module '<app>' may
+        // need to be recompiled." The <app>.devmode.js file is also replaced at boot, but
+        // since it is unchanged this doesn't make any difference.
+        //
+        // To work around this, we save off the original nocahe and devmode javascript files
+        // and then put them back after the server rewrites them.  Since the files are only
+        // replaced during the boot process, this apparently solves the problem.
+        //
+        // Because we need to wait for the server to come up before copying in the original
+        // files, this function also eliminates the need for a separate waitForDevmode()
+        // function that sleeps waiting for the server to be ready.  Instead, we can watch for
+        // the files to change and we know that the server is up once that happens.  This
+        // appears to work in both GWT 2.7.0-RC1 and GWT 2.7.0, even though RC1 doesn't exhibit
+        // the bug that overwrites the compiled code.  Worst-case, we fall back on the old
+        // behavior: if no modified files are discovered, the wait loop still times out after
+        // the configured server wait period.
+        //
+        // See the bug I filed: https://code.google.com/p/google-web-toolkit/issues/detail?id=9021
+
+        def warDir = project.gaeExplodeWar.explodedWarDirectory.getPath()
+        def sourceDir = project.file(warDir + "/" + project.cedarGwtOnGae.getAppModuleName()).canonicalPath
+        def archiveDir = project.file(project.projectDir.canonicalPath + "/build/tmp/javascript-archive").canonicalPath
+        def nocacheJs = project.cedarGwtOnGae.getAppModuleName() + ".nocache.js"
+        def devmodeJs = project.cedarGwtOnGae.getAppModuleName() + ".devmode.js"
+
+        WatchService watchService = FileSystems.getDefault().newWatchService()
+        Path watchPath = Paths.get(sourceDir)
+        watchPath.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY)
+
+        def start = new Date()
+        def elapsedSec = 0
+        def foundNocacheJs = false
+        def foundDevmodeJs = false
+
+        while (elapsedSec < project.cedarGwtOnGae.getServerWait()) {
+            WatchKey key = watchService.poll(1000, TimeUnit.MILLISECONDS);
+            if (key != null) {
+                for (WatchEvent<?> event: key.pollEvents()) {
+                    if (event.kind.name() == "ENTRY_MODIFY") {
+                        if (event.context.toFile().getName() == nocacheJs) {
+                            foundNocacheJs = true;
+                        } else if (event.context.toFile().getName() == devmodeJs) {
+                            foundDevmodeJs = true;
+                        }
+                    }
+                }
+
+                if (foundNocacheJs && foundDevmodeJs) {
+                    break;
+                }
+
+                key.reset()
+            }
+
+            elapsedSec = (new Date().time - start.time) / 1000.0
+        }
+
+        project.ant.copy(todir: sourceDir, overwrite: true, force: true) {
+            fileset(dir: archiveDir) {
+                include(name: nocacheJs)
+                include(name: devmodeJs)
+            }
+        }
     }
 
     private boolean isWindows() {

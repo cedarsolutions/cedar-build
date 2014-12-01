@@ -82,6 +82,9 @@ class CedarGwtOnGaePluginExtension {
     /** Expected boot time for the server, in seconds. */
     def serverWait
 
+    /** Expected stop time for the server, in seconds. */
+    def stopWait
+
     /** Whether the project uses a GWT version of 2.7.0-rc1 or newer. */
     def postGwt27
    
@@ -161,10 +164,20 @@ class CedarGwtOnGaePluginExtension {
         }
     }
 
+    /** Get stopWait, accounting for closures. */
+    Integer getStopWait() {
+        try {
+           String result = stopWait != null && stopWait instanceof Callable ? stopWait.call() : stopWait
+           return result == null ? 5 : Integer.parseInt(result.trim())  // default of 5 for backwards compatibility
+        } catch (NumberFormatException e) {
+           throw new NumberFormatException("stopWait is not an integer: " + e.getMessage());
+        }
+    }
+
     /** Get gwtVersion, accounting for closures. */
     boolean isPostGwt27() {
         def value = postGwt27 != null && postGwt27 instanceof Callable ? postGwt27.call() : postGwt27
-        return value == null ? false : value
+        return value == null ? false : value   // default of false for backwards compatibility
     }
 
     /** Get appEngineVersion, accounting for closures. */

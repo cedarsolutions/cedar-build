@@ -1,3 +1,7 @@
+Version 0.8.12  unreleased
+
+   * Update the devmode boot process to account for changes in GWT 2.7.0 relative to RC1.
+
 Version 0.8.11  08 Nov 2014
 
    * Update CedarGwtOnGae to understand new GWT 2.7.0-rc1's -noSuperDevMode flag in dev mode.
