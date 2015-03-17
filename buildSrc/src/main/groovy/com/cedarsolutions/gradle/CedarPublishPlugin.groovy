@@ -41,6 +41,7 @@ class CedarPublishPlugin implements Plugin<Project> {
         project.plugins.apply(SigningPlugin)
 
         project.extensions.create("cedarPublish", CedarPublishPluginExtension, project)
+        project.convention.plugins.cedarPublish = new CedarPublishPluginConvention(project)
 
         project.task("validatePublishSetup") << {
             project.cedarPublish.validateMavenRepositoryConfig()

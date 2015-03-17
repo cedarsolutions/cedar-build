@@ -1,3 +1,7 @@
+Version 0.8.13  unreleased
+
+   * Add support for a real Maven repository URL so we can publish to Maven Central.
+
 Version 0.8.12  01 Dec 2014
 
    * Update the devmode boot process to account for changes in GWT 2.7.0 relative to RC1.
