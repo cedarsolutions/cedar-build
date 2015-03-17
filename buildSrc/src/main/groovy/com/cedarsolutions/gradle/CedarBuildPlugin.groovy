@@ -40,10 +40,15 @@ class CedarBuildPlugin implements Plugin<Project> {
         project.extensions.create("cedarLabel", CedarLabelPluginExtension, project)
 
         project.convention.plugins.cedarBuild = new CedarBuildPluginConvention(project)
+        project.convention.plugins.cedarKeyValueStore = new CedarKeyValueStorePluginConvention(project)
         project.convention.plugins.cedarSigning = new CedarSigningPluginConvention(project)
         project.convention.plugins.cedarLabel = new CedarLabelPluginConvention(project)
 
-        project.gradle.addListener(new TestSummary())
+        String added = project.convention.plugins.cedarKeyValueStore.getCacheValue("testSummaryAdded")
+        if (added == null) {
+            project.gradle.addListener(new TestSummary())
+            project.convention.plugins.cedarKeyValueStore.setCacheValue("testSummaryAdded", "yes")
+        }
 
         project.gradle.taskGraph.whenReady { 
             taskGraph -> project.convention.plugins.cedarSigning.applySignatureConfiguration(taskGraph) 

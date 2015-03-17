@@ -1,3 +1,7 @@
+Version 0.8.14  17 Mar 2015
+
+   * Improve support for publishing to a real Maven URL.
+
 Version 0.8.13  16 Mar 2015
 
    * Add support for a real Maven repository URL so we can publish to Maven Central.

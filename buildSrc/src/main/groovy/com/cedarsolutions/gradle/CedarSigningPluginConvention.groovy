@@ -57,9 +57,21 @@ class CedarSigningPluginConvention {
     /** Get a GPG passphrase from the user, calling a closure with the result. */
     def getGpgPassphrase(action) {
         validateGpgConfig()
-        String title = "GPG key " + project.cedarSigning.getGpgKeyId();
-        String label = "Enter passphrase"
-        project.convention.plugins.cedarBuild.getInput(title, label, true, action)
+
+        String passphrase = project.convention.plugins.cedarKeyValueStore.getCacheValue("gpgPassphrase")
+        if (passphrase == null) {
+            String title = "GPG key " + project.cedarSigning.getGpgKeyId();
+            String label = "Enter passphrase"
+
+            def result = null  // def NOT String, otherwise closure assignment won't work
+            def resultaction = { value -> result = value }
+            project.convention.plugins.cedarBuild.getInput(title, label, true, resultaction)
+
+            passphrase = result.toString()
+            project.convention.plugins.cedarKeyValueStore.setCacheValue("gpgPassphrase", passphrase)
+        }
+
+        action(passphrase)
     }
 
     /** Set signature configuration for all projects. */
