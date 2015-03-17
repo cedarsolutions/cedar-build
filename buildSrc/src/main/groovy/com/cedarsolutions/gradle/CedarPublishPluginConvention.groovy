@@ -25,7 +25,6 @@
 package com.cedarsolutions.gradle
 
 import org.gradle.api.Project
-import org.gradle.plugins.signing.Sign
 import org.gradle.api.InvalidUserDataException
 
 /** 
@@ -44,18 +43,26 @@ class CedarPublishPluginConvention {
 
     /** Get a Maven repository password from the user, calling a closure with the result. */
     def getMavenRepositoryPassword() {
-        def password = null  // def NOT String, otherwise closure assignment won't work
-
-        if (project.extensions.cedarPublish.isMavenRepositoryUserConfigured()) {
-            if (project.gradle.startParameter.taskNames.contains("publish")) {
+        if (!project.extensions.cedarPublish.isMavenRepositoryUserConfigured()) {
+            return null;
+        } else if (!project.gradle.startParameter.taskNames.contains("publish")) {
+            return null;
+        } else {
+            String password = project.convention.plugins.cedarKeyValueStore.getCacheValue("mavenRepositoryPassword")
+            if (password == null) {
                 String title = "Maven user " + project.extensions.cedarPublish.getMavenRepositoryUser()
                 String label = "Enter password"
-                def action = { value -> password = value }
-                project.convention.plugins.cedarBuild.getInput(title, label, true, action)
-            } 
-        }
 
-        return password.toString()
+                def result = null  // def NOT String, otherwise closure assignment won't work
+                def resultaction = { value -> result = value }
+                project.convention.plugins.cedarBuild.getInput(title, label, true, resultaction)
+
+                password = result.toString()
+                project.convention.plugins.cedarKeyValueStore.setCacheValue("mavenRepositoryPassword", password)
+            } 
+
+            return password;
+        }
     }
 
 }
