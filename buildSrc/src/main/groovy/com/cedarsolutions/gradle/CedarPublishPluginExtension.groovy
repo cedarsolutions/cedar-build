@@ -46,25 +46,45 @@ class CedarPublishPluginExtension {
     /** Path to the Mercurial-based Maven project that code will be published into. */
     def mercurialMavenProject
 
+    /** URL of the real Maven repository that code will be published into. */
+    def mavenRepositoryUrl
+
+    /** Username to use when publishing to Maven URL. */
+    def mavenRepositoryUser
+
     /** Get the project name, allowing for closure assignment. */
     String getMercurialMavenProject() {
         return mercurialMavenProject != null && mercurialMavenProject instanceof Callable ? mercurialMavenProject.call() : mercurialMavenProject
-    }  
+    }
+
+    /** Get the Maven repository URL, allowing for closure assignment. */
+    String getMavenRepositoryUrl() {
+        return mavenRepositoryUrl != null && mavenRepositoryUrl instanceof Callable ? mavenRepositoryUrl.call() : mavenRepositoryUrl
+    }
+
+    /** Get the Maven repository username, allowing for closure assignment. */
+    String getMavenRepositoryUser() {
+        return mavenRepositoryUser != null && mavenRepositoryUser instanceof Callable ? mavenRepositoryUser.call() : mavenRepositoryUser
+    }
 
     /** Whether digital signatures are required for the current publish actions. */
     def isSignatureRequired() {
         // Gradle's behavior varies depending on whether there are subprojects.
-        return project.cedarPublish.isMercurialRepositoryConfigured() &&
+        return (isMavenRepositoryUrlConfigured() || isMercurialRepositoryConfigured()) && 
                (project.gradle.taskGraph.hasTask(":uploadArchives") || 
                project.gradle.taskGraph.hasTask(":${project.name}:uploadArchives"));
     }
 
-    /** Get the proper Mercurial-based Maven repository URL. */
+    /** Get the proper Maven repository URL to use for publishing. */
     def getPublishRepositoryUrl() {
-        if (!isMercurialRepositoryConfigured()) {
-             return null;
+        if (isMavenRepositoryUrlConfigured()) {
+            return getMavenRepositoryUrl()
         } else {
-             return "file://" + new File(getMercurialMavenProject()).canonicalPath.replace("\\", "/") + "/maven"
+            if (!isMercurialRepositoryConfigured()) {
+                 return null;
+            } else {
+                 return "file://" + new File(getMercurialMavenProject()).canonicalPath.replace("\\", "/") + "/maven"
+            }
         }
     }
 
@@ -83,16 +103,20 @@ class CedarPublishPluginExtension {
         }
     }
 
+    /** Whether a specific Maven repository URL is configured. */
+    def isMavenRepositoryUrlConfigured() {
+        return !(getMavenRepositoryUrl() == null || getMavenRepositoryUrl() == "unset");
+    }
+
+    /** Whether a specific Maven repository username is configured. */
+    def isMavenRepositoryUserConfigured() {
+        return !(getMavenRepositoryUser() == null || getMavenRepositoryUser() == "unset");
+    }
+
     /** Validate the Mercurial-based Maven repository URL. */
     def validateMavenRepositoryConfig() {
-        if (getMercurialMavenProject() == null || getMercurialMavenProject() == "unset") {
-            throw new InvalidUserDataException("Publish error: mercurialMavenProject is unset")
-        } 
-
-        if (!(new File(getMercurialMavenProject()).isDirectory()
-           && new File(getMercurialMavenProject() + "/.hg").isDirectory()
-           && new File(getMercurialMavenProject() + "/maven").isDirectory())) {
-            throw new InvalidUserDataException("Publish error: not a Mercurial-based Maven repository: " + getMercurialMavenProject())
+        if (!isMavenRepositoryUrlConfigured() && !isMercurialRepositoryConfigured()) {
+            throw new InvalidUserDataException("Must configure either Maven repository URL or valid Mercurial repository.")
         }
     }
 

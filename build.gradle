@@ -85,28 +85,56 @@ cedarSigning {
     projects = allprojects
 }
 
+javadoc {
+    options.addStringOption("-quiet")
+}
+
+task jdoc(type: Javadoc) {
+    source = "buildSrc/src/main/java"
+    include( "**/*.java" )
+}
+
 jar {
     from "buildSrc/build/classes/main"
     from "buildSrc/build/resources/main"
 }
 
+task javadocJar(type: Jar, dependsOn: jdoc) {
+    classifier = "javadoc"
+    archiveName = "cedar-build-${baseName}-${version}-${classifier}.${extension}"
+    from "${project.docsDir}/javadoc"
+}
+
+task sourcesJar(type: Jar) {
+    classifier = "sources"
+    from "buildSrc/src/main"
+    excludes = [ ".settings", ".project", ".classpath", ".gradle", "build", ]
+}
+
 artifacts {
     archives jar
+    archives javadocJar
+    archives sourcesJar
 }
 
 signing {
     required = { cedarPublish.isSignatureRequired() }
     sign jar
+    sign javadocJar
+    sign sourcesJar
 }
 
 cedarPublish {
-    mercurialMavenProject = config_mercurialMavenProject
+    mavenRepositoryUrl = config_mavenRepositoryUrl
+    mavenRepositoryUser = config_mavenRepositoryUser
 }
 
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: cedarPublish.getPublishRepositoryUrl())
+            repository(url: cedarPublish.getPublishRepositoryUrl()) {
+                authentication(userName: cedarPublish.getMavenRepositoryUser(), password: project.convention.plugins.cedarPublish.getMavenRepositoryPassword())
+            }
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
             pom.artifactId = artifactId
             pom.project {
