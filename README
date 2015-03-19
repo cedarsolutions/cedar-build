@@ -1,13 +1,18 @@
 This is the Cedar Build project, which provides Gradle plugins and other
 functionality for use in a standardized build process.  The home page for Cedar
-Common is:
+Build is:
 
-    http://code.google.com/p/cedar-common/  
+   https://bitbucket.org/cedarsolutions/cedar-build
 
-This plugin is available in a Maven repository at:
+Use the plugin like this in your build.gradle:
 
-    http://maven.cedar-common.googlecode.com/hg/maven
+buildscript {
+    repositories {
+        mavenLocal()   // Local Maven repository
+        mavenCentral() // Maven Central repository
+    }
 
----
-
-Gradle: http://www.gradle.org/
+    dependencies {
+        classpath "com.googlecode.cedar-common:cedar-build:0.8.14"
+    }
+}
