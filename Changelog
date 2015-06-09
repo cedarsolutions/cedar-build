@@ -1,3 +1,7 @@
+Version 0.8.15  unreleased
+
+   * Improve Cucumber JSON output by merging first and second pass results.
+
 Version 0.8.14  17 Mar 2015
 
    * Improve support for publishing to a real Maven URL.
