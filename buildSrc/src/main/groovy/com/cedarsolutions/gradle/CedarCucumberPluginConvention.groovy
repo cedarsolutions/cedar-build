@@ -26,6 +26,8 @@ package com.cedarsolutions.gradle
 import org.gradle.api.Project
 import org.gradle.api.InvalidUserDataException
 import org.apache.tools.ant.taskdefs.condition.Os
+import groovy.json.JsonSlurper;
+import org.boon.json.JsonSerializerFactory;
 
 /**
  * Plugin convention for cedarCucumber.
@@ -45,6 +47,7 @@ class CedarCucumberPluginConvention {
      * Execute the cucumber tests, returning an ExecResult so caller can handle failures.
      * If you want the database to start over fresh, you need to reboot dev mode.
      * You can optionally provide either name or feature, but not both.
+     * The final result, useful for continuous integration, goes into a file called "result.json".
      * @param mode      The mode to run in, either "single-pass", "first-pass" or "second-pass"
      * @param name      Specific name of a test, or a substring, as for the Cucumber --name option
      * @param feature   Path to a specific feature to execute, relative to the acceptance/cucumber directory
@@ -57,6 +60,8 @@ class CedarCucumberPluginConvention {
         def reportDir = project.file(project.projectDir.canonicalPath + "/build/reports/cucumber").canonicalPath
         def firstPass = project.file(reportDir + "/first-pass.json").canonicalPath
         def secondPass = project.file(reportDir + "/second-pass.json").canonicalPath
+        def result = project.file(reportDir + "/result.json").canonicalPath
+        def returnValue
 
         if ("single-pass".equals(mode)) {
             println("\r\nExecuting Cucumber acceptance tests, single-pass mode")
@@ -87,15 +92,19 @@ class CedarCucumberPluginConvention {
 
         project.file(reportDir).mkdirs()
 
-        // We need to make sure that at the end of the run, only one result is left, the one
-        // for the latest attempt.  Otherwise, the Jenkins Cucumber plugin might notice a
-        // failure in one of the other files and fail the entire build. 
-        project.file(firstPass).delete()
-        project.file(secondPass).delete()
-
-        if ("first-pass".equals(mode)) {
+        if ("single-pass".equals(mode)) {
+            project.file(firstPass).delete()
+            project.file(secondPass).delete()
+            project.file(result).delete()
+        } else if ("first-pass".equals(mode)) {
             rerunEnabled = true
             project.file(rerunFile).delete()
+            project.file(firstPass).delete()
+            project.file(secondPass).delete()
+            project.file(result).delete()
+        } else if ("second-pass".equals(mode)) {
+            project.file(secondPass).delete()
+            project.file(result).delete()
         }
 
         if ("second-pass".equals(mode)) {
@@ -115,7 +124,7 @@ class CedarCucumberPluginConvention {
         }
 
         if (rerunEnabled) {
-            return project.exec {
+            returnValue = project.exec {
                 workingDir = project.cedarCucumber.getCucumberDir()
                 ignoreExitValue = true
                 environment RERUN_FILE: rerunFile
@@ -123,13 +132,24 @@ class CedarCucumberPluginConvention {
                 args = command
             }
         } else {
-            return project.exec {
+            returnValue = project.exec {
                 workingDir = project.cedarCucumber.getCucumberDir()
                 ignoreExitValue = true
                 executable = project.cedarCucumber.getRubyPath()
                 args = command
             }
         }
+
+        if ("single-pass".equals(mode)) {
+            project.file(firstPass).renameTo(result)
+        } else if ("second-pass".equals(mode)) {
+            mergeJsonResults(firstPass, secondPass, result)
+            project.file(rerunFile).delete()
+            project.file(firstPass).delete()
+            project.file(secondPass).delete()
+        }
+
+        return returnValue
     }
 
     /** Verify that all of the required components have been installed in order to run Cucumber. */
@@ -383,6 +403,77 @@ class CedarCucumberPluginConvention {
         }
     }
 
+    /** 
+      * Merge JSON Cucumber results from two files on disk, using second pass results to overlay first pass results. 
+      * This way, if a test fails in the first pass and succeeds in the second pass, we report success and not failure.
+      */
+    def mergeJsonResults(def firstPass, def secondPass, def result) {
+        def firstPassMap = generateFeatureMap(firstPass);
+        def secondPassMap = generateFeatureMap(secondPass);
+
+        for (feature in firstPassMap) {
+            for (scenario in feature.value.scenarioMap) {
+                if (secondPassMap.containsKey(feature.value.id)) {
+                    if (secondPassMap.get(feature.value.id).get("scenarioMap").containsKey(scenario.value.id)) {
+                        feature.value.scenarioMap.put(scenario.value.id, secondPassMap.get(feature.value.id).get("scenarioMap").get(scenario.value.id))
+                    }
+                }
+            }
+        }
+
+        def features = generateFeaturesList(firstPassMap)
+
+        // Unfortunately, in the version of Groovy with Gradle v1.12, the
+        // built-in JSON builder doesn't properly escape embedded quotes in map
+        // keys.  This results in invalid JSON.  So, I've had to find an
+        // alternative, and I've chosen to serialize with Boon instead.
+        project.file(result).withWriter { writer ->
+            def serializer = new JsonSerializerFactory().create();
+            writer << serializer.serialize(features).toString();
+        }
+    }
+
+    /** Parse Cucumber results and generate a more map-based structure that's easier to work with when merging results. */
+    def generateFeatureMap(def json) {
+        def featureMap = new LinkedHashMap()
+
+        def jsonSlurper = new JsonSlurper()
+        for (feature in jsonSlurper.parseText(project.file(json).text)) {
+            featureMap.put(feature.id, feature)
+
+            def scenarioMap = new LinkedHashMap();
+            for (scenario in feature.elements) {
+                scenarioMap.put(scenario.id, scenario)
+            }
+
+            featureMap.get(feature.id).remove("elements")
+            featureMap.get(feature.id).put("scenarioMap", scenarioMap)
+        }
+
+        return featureMap
+    }
+
+    /** Turn our map-based structure back into a list that matches the Cucumber results format when merging results. */
+    def generateFeaturesList(def map) {
+        def features = new ArrayList()
+
+        for (feature in map) {
+            def elements = new ArrayList()
+
+            for (scenario in feature.value.scenarioMap) {
+                elements.add(scenario.value)
+            }
+
+            feature.value.remove("scenarioMap")
+            feature.value.put("elements", elements);
+
+            features.add(feature.value)
+        }
+
+        return features
+    }
+
+    /** Quick check to see whether the current platform is Windows. */
     private boolean isWindows() {
         return Os.isFamily(Os.FAMILY_WINDOWS);
     }
