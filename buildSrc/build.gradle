@@ -26,6 +26,7 @@ repositories {
     mavenCentral()
 }
 
+// Don't forget to add the compile dependencies into the parent build.gradle, too.
 dependencies {
     compile "org.gradle.api.plugins:gradle-gae-plugin:0.9"
     compile "org.codehaus.javancss:javancss:32.53"
