@@ -2,6 +2,7 @@ Version 0.8.15  unreleased
 
    * Improve Cucumber JSON output by merging first and second pass results.
    * Fix CedarProperties plugin to trim input values to null rather than leaving empty strings.
+   * Clarify Javadoc around how versions are used in CedarCucumberPluginExtension.
 
 Version 0.8.14  17 Mar 2015
 
