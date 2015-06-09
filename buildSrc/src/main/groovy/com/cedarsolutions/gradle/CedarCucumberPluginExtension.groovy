@@ -61,19 +61,19 @@ class CedarCucumberPluginExtension {
     /** URL for JRuby. */
     def jrubyDownloadUrl = "http://jruby.org.s3.amazonaws.com/downloads/1.7.6/jruby-bin-1.7.6.tar.gz"
 
-    /** Required version of Selenium, possibly null. */
+    /** Required version of Selenium, possibly null to get latest version. */
     def seleniumVersion = null
 
-    /** Required version of Rspec gem, possibly null. */
+    /** Required version of Rspec gem, possibly null to get latest version. */
     def rspecVersion = "2.14.1"
 
-    /** Required version of Capybara gem, possibly null. */
+    /** Required version of Capybara gem, possibly null to get latest version. */
     def capybaraVersion = "2.1.0"
 
-    /** Required version of Cucumber gem, possibly null. */
+    /** Required version of Cucumber gem, possibly null to get latest version. */
     def cucumberVersion = "1.3.8"
 
-    /** Required version of Headless gem, possibly null. */
+    /** Required version of Headless gem, possibly null to get latest version. */
     def headlessVersion = "1.0.1"
 
     /** Get the Cucumber formatter to use, or null to use the default. */
