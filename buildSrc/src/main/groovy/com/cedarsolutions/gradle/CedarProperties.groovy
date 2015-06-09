@@ -71,8 +71,9 @@ class CedarProperties implements Action<Plugin> {
 
         def added = 0
         properties.propertyNames().each { property ->
-            project.logger.info("Set project.ext[" + property + "] to [" + properties.getProperty(property) + "]")
-            project.ext[property] = properties.getProperty(property)
+            def value = trimToNull(properties.getProperty(property));
+            project.logger.info("Set project.ext[" + property + "] to [" + value + "]")
+            project.ext[property] = value
             added += 1
         }
 
@@ -120,6 +121,25 @@ class CedarProperties implements Action<Plugin> {
         }
 
         project.logger.lifecycle("CedarBuild GWT properties loader: added ${added} project.ext properties from: " + project.file(file).name)
+    }
+
+    /**
+     * Trim a string value (null-safe).
+     * @param value  String value to operate on
+     * @return Trimmed value, possibly null.
+     */
+    def trim(String value) {
+        return value == null ? null : value.trim();
+    }
+
+    /**
+     * Trim a string value, returning null if the trimmed string is empty.
+     * @param value  String value to operate on
+     * @return Trimmed value, possibly null.
+     */
+    def trimToNull(String value) {
+        String result = trim(value);
+        return result == null || result.length() == 0 ? null : result;
     }
 
 }
