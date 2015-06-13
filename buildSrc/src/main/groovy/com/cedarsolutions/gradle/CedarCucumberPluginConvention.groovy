@@ -227,7 +227,7 @@ class CedarCucumberPluginConvention {
     private void verifyGemVersions() {
         if (project.cedarCucumber.getSeleniumVersion() != null) {
             def seleniumVersion = getGemVersion("selenium-webdriver")
-            if (!seleniumVersion != project.cedarCucumber.getSeleniumVersion()) {
+            if (seleniumVersion != project.cedarCucumber.getSeleniumVersion()) {
                 def version = project.cedarCucumber.getSeleniumVersion()
                 project.logger.warn("Cucumber tests might not work due to version mismatch; expected Selenium ${version}, but got: " + seleniumVersion)
             }
