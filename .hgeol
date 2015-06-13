@@ -1,0 +1,15 @@
+[repository]
+native = CRLF
+
+[eol]
+only-consistent = False
+fix-trailing-newline = True
+
+[patterns]
+**.doc = BIN
+**.docx = BIN
+**.xls = BIN
+**.xlsx = BIN
+**.pdf = BIN
+** = native
+
