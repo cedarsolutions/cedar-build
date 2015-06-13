@@ -1,8 +1,8 @@
-Version 0.8.17  unreleased
+Version 0.8.17  13 Jun 2015
 
    * Fix Cucumber-related bug where check for Selenium version reports incorrect warning.
 
-Version 0.8.16  09 May 2015
+Version 0.8.16  09 Jun 2015
 
    * Improve Cucumber JSON output by merging first and second pass results.
    * Fix CedarProperties plugin to trim input values to null rather than leaving empty strings.
