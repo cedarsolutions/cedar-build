@@ -1,6 +1,6 @@
-Version 0.9.0   unreleased
+Version 0.9.0   13 Jul 2015
 
-    * Convert to Gradle 2, tested with Gradle v2.5.
+    * Initial conversion to Gradle 2, tested with Gradle v2.5.
     * Remove usage of org.gradle.util.Jvm in CedarGwtOnGaePluginConvention.
     * Remove usage of org.gradle.util.Jvm in CedarJavadocPluginConvention.
     * Adjust TestTask constructor to match the new Gradle 2 parent class.
