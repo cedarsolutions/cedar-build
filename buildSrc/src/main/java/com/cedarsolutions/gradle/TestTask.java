@@ -61,6 +61,7 @@ import java.util.concurrent.Callable;
  *
  * @author Kenneth J. Pronovici <pronovic@ieee.org>
  */
+@SuppressWarnings("unchecked")
 public class TestTask extends Test {
 
     private Callable deferredConfig;
