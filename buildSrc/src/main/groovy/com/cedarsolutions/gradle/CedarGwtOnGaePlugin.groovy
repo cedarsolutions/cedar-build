@@ -27,7 +27,7 @@ import org.gradle.api.Project
 import org.gradle.api.Plugin
 
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.plugins.gae.GaePlugin
+import com.google.appengine.AppEnginePlugin
 
 /**
  * The cedarGwtOnGae plugin.
@@ -37,7 +37,7 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
 
     /** Apply the plugin. */
     void apply(Project project) {
-        project.plugins.apply(GaePlugin)
+        project.plugins.apply(AppEnginePlugin)
         project.plugins.apply(JavaPlugin)
 
         project.extensions.create("cedarGwtOnGae", CedarGwtOnGaePluginExtension, project)

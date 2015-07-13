@@ -26,7 +26,6 @@ package com.cedarsolutions.gradle
 import org.gradle.api.Project
 import org.gradle.api.InvalidUserDataException
 import org.apache.tools.ant.taskdefs.condition.Os
-import org.gradle.util.Jvm
 import java.nio.file.WatchService;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchKey;
@@ -75,8 +74,11 @@ class CedarGwtOnGaePluginConvention {
         def agentJar = getAppEngineAgentJar()
         def launcher = "com.google.appengine.tools.development.gwt.AppEngineLauncher"
 
+        // See: http://stackoverflow.com/questions/14564858/groovy-get-java-home-from-program
+        def javaHome = project.file(System.env.'JAVA_HOME').canonicalPath 
+        def java = project.file(javaHome + "/bin/java").canonicalPath
+
         def xvfb = project.cedarGwtOnGae.getXvfbRunPath()
-        def java = Jvm.current().getJavaExecutable().canonicalPath
         def warDir = project.gaeExplodeWar.explodedWarDirectory.getPath()
         def workingDir = warDir
         def cacheDir = project.file(warDir + "/WEB-INF/appengine-generated").canonicalPath

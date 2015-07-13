@@ -28,7 +28,6 @@ import org.gradle.api.Project
 import org.gradle.plugins.signing.Sign
 import org.gradle.api.InvalidUserDataException
 import java.io.File;
-import org.gradle.util.Jvm;  // this is deprecated, but I can't find notes on what replaces it ?!?
 import org.apache.tools.ant.taskdefs.condition.Os 
 
 /** 
@@ -47,6 +46,10 @@ class CedarJavadocPluginConvention {
 
     /** Generate Javadoc per configuration. */
     def generateJavadoc() {
+        // See: http://stackoverflow.com/questions/14564858/groovy-get-java-home-from-program
+        def javaHome = project.file(System.env.'JAVA_HOME').canonicalPath
+        def javadoc = project.file(javaHome + "/bin/javadoc").canonicalPath
+
         def tempDir =  project.file(project.buildDir.canonicalPath + "/tmp").canonicalPath
         def optionsFile = project.file(tempDir + "/jdoc.options").canonicalPath
 
@@ -69,7 +72,7 @@ class CedarJavadocPluginConvention {
                 project.file(tempDir).mkdirs()
 
                 generateOptionsFile(optionsFile, classpath, title, srcDirs, subpackages, output)
-                project.ant.exec(executable: Jvm.current().getJavadocExecutable(), 
+                project.ant.exec(executable: javadoc, 
                                  failonerror: "true", dir: project.projectDir) {
                     arg(value: "@${optionsFile}")
                 }
