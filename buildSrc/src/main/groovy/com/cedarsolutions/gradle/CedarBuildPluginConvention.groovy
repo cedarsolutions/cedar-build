@@ -98,6 +98,7 @@ class CedarBuildPluginConvention {
     * @param action  The action to execute when the input has been retrieved
     */
     def getInput(String title, String label, boolean secure, Closure action) {
+        // Note that System.console() returns null when running with the Gradle daemon.
         Console console = System.console()
         if (console != null) {
             getInputViaConsole(title, label, secure, action)
