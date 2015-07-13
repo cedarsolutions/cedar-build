@@ -17,7 +17,7 @@
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // *
 // * Author   : Kenneth J. Pronovici <pronovic@ieee.org>
-// * Language : Gradle (>= 1.7)
+// * Language : Gradle (>= 2.5)
 // * Project  : Secret Santa Exchange
 // *
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -27,6 +27,7 @@ import org.gradle.api.Project
 import org.gradle.api.Plugin
 
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.WarPlugin
 import com.google.appengine.AppEnginePlugin
 
 /**
@@ -37,8 +38,9 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
 
     /** Apply the plugin. */
     void apply(Project project) {
-        project.plugins.apply(AppEnginePlugin)
         project.plugins.apply(JavaPlugin)
+        project.plugins.apply(WarPlugin)
+        project.plugins.apply(AppEnginePlugin)
 
         project.extensions.create("cedarGwtOnGae", CedarGwtOnGaePluginExtension, project)
         project.extensions.create("cedarCucumber", CedarCucumberPluginExtension, project)
@@ -55,10 +57,10 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
     void applyCedarGwtOnGae(Project project) {
 
         // We need to download the SDK before the classpath can be generated properly.
-        project.tasks.compileJava.dependsOn(project.tasks.gaeDownloadSdk)
+        project.tasks.compileJava.dependsOn(project.tasks.appengineDownloadSdk)
 
         // Tell the GAE plugin to download the SDK
-        project.convention.plugins.gae.downloadSdk = true
+        project.convention.appengine.downloadSdk = true
 
         // Set up the war plugin
         project.webAppDirName = "war"  // for some reason, I can't pull this out into cedarGwtOnGae configuration (?)
@@ -77,10 +79,10 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
         }
 
         // Compile GWT into the exploded war directory
-        project.task("buildApplication", dependsOn: project.tasks.gaeExplodeWar) << {
+        project.task("buildApplication", dependsOn: project.tasks.appengineExplodeApp) << {
             project.cedarGwtOnGae.validateGwtConfig()
 
-            def warDir = project.gaeExplodeWar.explodedWarDirectory.getPath()
+            def warDir = project.appengineExplodeApp.explodedAppDirectory.getPath()
             def moduleDir = project.file(warDir + "/" + project.cedarGwtOnGae.getAppModuleName()).canonicalPath
             def classesDir = project.file(warDir + "/WEB-INF/classes").canonicalPath
             def libDir = project.file(warDir + "/WEB-INF/lib").canonicalPath

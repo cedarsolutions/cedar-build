@@ -17,7 +17,7 @@
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // *
 // * Author   : Kenneth J. Pronovici <pronovic@ieee.org>
-// * Language : Gradle (>= 1.7)
+// * Language : Gradle (>= 2.5)
 // * Project  : Secret Santa Exchange
 // *
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -58,7 +58,7 @@ class CedarGwtOnGaePluginConvention {
 
     /** Get the location of the exploded App Engine SDK directory on disk. */
     public String getAppEngineSdkDir() {
-        return project.file(project.gaeDownloadSdk.explodedSdkDirectory.getPath() + 
+        return project.file(project.appengineDownloadSdk.explodedSdkDirectory.getPath() + 
                             "/appengine-java-sdk-" + 
                             project.cedarGwtOnGae.getAppEngineVersion()).canonicalPath
     }
@@ -79,7 +79,7 @@ class CedarGwtOnGaePluginConvention {
         def java = project.file(javaHome + "/bin/java").canonicalPath
 
         def xvfb = project.cedarGwtOnGae.getXvfbRunPath()
-        def warDir = project.gaeExplodeWar.explodedWarDirectory.getPath()
+        def warDir = project.appengineExplodeApp.explodedAppDirectory.getPath()
         def workingDir = warDir
         def cacheDir = project.file(warDir + "/WEB-INF/appengine-generated").canonicalPath
         def classesDir = project.file(warDir + "/WEB-INF/classes").canonicalPath
@@ -198,7 +198,7 @@ class CedarGwtOnGaePluginConvention {
     private void archiveApplicationJavascript() {
         // See discussion below in restoreApplicationJavascript() regarding why this is necessary
 
-        def warDir = project.gaeExplodeWar.explodedWarDirectory.getPath()
+        def warDir = project.appengineExplodeApp.explodedAppDirectory.getPath()
         def sourceDir = project.file(warDir + "/" + project.cedarGwtOnGae.getAppModuleName()).canonicalPath
         def archiveDir = project.file(project.projectDir.canonicalPath + "/build/tmp/javascript-archive").canonicalPath
         def nocacheJs = project.cedarGwtOnGae.getAppModuleName() + ".nocache.js"
@@ -238,7 +238,7 @@ class CedarGwtOnGaePluginConvention {
         //
         // See the bug I filed: https://code.google.com/p/google-web-toolkit/issues/detail?id=9021
 
-        def warDir = project.gaeExplodeWar.explodedWarDirectory.getPath()
+        def warDir = project.appengineExplodeApp.explodedAppDirectory.getPath()
         def sourceDir = project.file(warDir + "/" + project.cedarGwtOnGae.getAppModuleName()).canonicalPath
         def archiveDir = project.file(project.projectDir.canonicalPath + "/build/tmp/javascript-archive").canonicalPath
         def nocacheJs = project.cedarGwtOnGae.getAppModuleName() + ".nocache.js"
