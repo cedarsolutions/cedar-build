@@ -47,8 +47,8 @@ class TestSummary implements TestListener {
     }
 
     public void afterSuite(TestDescriptor suite, TestResult result) {
-        // On Windows, we get one result called "Test Run".  On Linux, there are several results, and "Test Run" is one of them.
-        if (suite.getName() == "Test Run" && this.getTotal() > 0) {
+        // We get duplicate notifications; the one we want looks like "Gradle Test Run :test:clienttest"
+        if (suite.getName().startsWith("Gradle Test Run") && this.getTotal() > 0) {
             System.out.printf("*** Test results: passed=%d, failed=%d, skipped=%d%n", passed, failed, skipped);
         }
     }

@@ -1,3 +1,7 @@
+Version 0.9.1   unreleased
+
+    * Fix TestSummary output so it works properly with Gradle 2.
+
 Version 0.9.0   13 Jul 2015
 
     * Initial conversion to Gradle 2, tested with Gradle v2.5.
