@@ -17,8 +17,8 @@
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // *
 // * Author   : Kenneth J. Pronovici <pronovic@ieee.org>
-// * Language : Gradle (>= 1.7)
-// * Project  : Secret Santa Exchange
+// * Language : Gradle (>= 2.5)
+// * Project  : Common Gradle Build Functionality
 // *
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.cedarsolutions.gradle

@@ -2,6 +2,7 @@ Version 0.9.1   unreleased
 
     * Fix TestSummary output to work properly with new Gradle 2 suite names.
     * Adjust CedarGwtOnGae plugin to work properly with gradle-appengine-plugin.
+    * Update file headers to properly reference Gradle 2.5 instead of Gradle 1.7.
 
 Version 0.9.0   13 Jul 2015
 
