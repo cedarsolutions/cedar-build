@@ -1,6 +1,7 @@
 Version 0.9.1   unreleased
 
     * Fix TestSummary output so it works properly with Gradle 2.
+    * Adjust CedarGwtOnGae plugin to work properly with gradle-appengine-plugin.
 
 Version 0.9.0   13 Jul 2015
 
