@@ -1,7 +1,6 @@
 Version 0.9.0   unreleased
 
     * Convert to Gradle 2, tested with Gradle v2.5.
-    * Add -Xlint to Java compiler arguments, to find deprecation warnings.
     * Remove usage of org.gradle.util.Jvm in CedarGwtOnGaePluginConvention.
     * Remove usage of org.gradle.util.Jvm in CedarJavadocPluginConvention.
     * Adjust TestTask constructor to match the new Gradle 2 parent class.
