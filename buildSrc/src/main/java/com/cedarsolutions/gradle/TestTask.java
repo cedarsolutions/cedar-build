@@ -24,7 +24,6 @@ package com.cedarsolutions.gradle;
 
 import java.util.concurrent.Callable;
 import org.gradle.api.tasks.testing.Test;
-import org.gradle.listener.ListenerManager;
 import org.gradle.logging.StyledTextOutputFactory;
 import org.gradle.api.internal.file.FileResolver;
 import org.gradle.internal.Factory;
@@ -66,11 +65,8 @@ public class TestTask extends Test {
 
     private Callable deferredConfig;
 
-    @Inject
-    public TestTask(ListenerManager listenerManager, StyledTextOutputFactory textOutputFactory, FileResolver fileResolver,
-                    Factory<WorkerProcessBuilder> processBuilderFactory, ActorFactory actorFactory, Instantiator instantiator,
-                    ProgressLoggerFactory progressLoggerFactory) {
-        super(listenerManager, textOutputFactory, fileResolver, processBuilderFactory, actorFactory, instantiator, progressLoggerFactory);
+    public TestTask() {
+        super();
     }
 
     @TaskAction

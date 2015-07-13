@@ -17,7 +17,7 @@
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // *
 // * Author   : Kenneth J. Pronovici <pronovic@ieee.org>
-// * Language : Gradle (>= 1.7)
+// * Language : Gradle (>= 2.5)
 // * Project  : Common Build Functionality
 // *
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -56,12 +56,18 @@ version = config_mavenPublishVersion
 sourceCompatibility = JavaVersion.VERSION_1_6
 targetCompatibility = JavaVersion.VERSION_1_6
 
+gradle.projectsEvaluated {
+   tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:deprecation"
+    }
+}
+
 tasks.publish.dependsOn += [ label, ] 
 
 dependencies {
     compile gradleApi()
     compile localGroovy()
-    compile "org.gradle.api.plugins:gradle-gae-plugin:0.9"
+    compile "com.google.appengine:gradle-appengine-plugin:1.9.23"
     compile "org.codehaus.javancss:javancss:32.53"
     compile "io.fastjson:boon:0.33"
 }
