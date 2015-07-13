@@ -56,12 +56,12 @@ version = config_mavenPublishVersion
 sourceCompatibility = JavaVersion.VERSION_1_6
 targetCompatibility = JavaVersion.VERSION_1_6
 
-# There's no need for this now, because I've fixed all the warnings.
-#gradle.projectsEvaluated {
-#   tasks.withType(JavaCompile) {
-#        options.compilerArgs << "-Xlint:unchecked"
-#    }
-#}
+// There's no need for this now, because I've fixed all the warnings.
+//gradle.projectsEvaluated {
+//   tasks.withType(JavaCompile) {
+//        options.compilerArgs << "-Xlint:unchecked"
+//    }
+//}
 
 tasks.publish.dependsOn += [ label, ] 
 
