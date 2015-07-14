@@ -107,7 +107,7 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
             }
 
             // Save off application Javascript so we can work around server boot behavior later
-            project.convention.plugins.deltaGwt.archiveApplicationJavascript()
+            project.convention.plugins.cedarGwtOnGae.archiveApplicationJavascript()
         }
 
         // Start the development mode server
