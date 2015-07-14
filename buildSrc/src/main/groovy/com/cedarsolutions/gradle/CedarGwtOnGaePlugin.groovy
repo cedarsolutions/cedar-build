@@ -90,6 +90,7 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
 
             project.file(moduleDir).deleteDir()  // It's proved difficult to exclude this via project.war.excludes
 
+            // Run the GWT compiler
             project.ant.java(classname : compilerClass, fork : "true", failonerror : "true") {
                 jvmarg(value: "-Xmx" + project.cedarGwtOnGae.getGwtCompilerMemory())
                 arg(value : "-war")
@@ -104,6 +105,9 @@ class CedarGwtOnGaePlugin implements Plugin<Project> {
                     }
                 }
             }
+
+            // Save off application Javascript so we can work around server boot behavior later
+            project.convention.plugins.deltaGwt.archiveApplicationJavascript()
         }
 
         // Start the development mode server

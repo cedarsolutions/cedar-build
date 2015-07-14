@@ -94,7 +94,6 @@ class CedarGwtOnGaePluginConvention {
         def noSuperDevMode = project.cedarGwtOnGae.isPostGwt27() ? "-nosuperDevMode" : "";
 
         project.file(cacheDir).deleteDir()  // clean up the database every time the server is rebooted
-        archiveApplicationJavascript()
 
         if (project.cedarGwtOnGae.getIsHeadlessModeAvailable()) {
             project.ant.exec(executable: xvfb, dir: workingDir, spawn: true) {
@@ -147,7 +146,7 @@ class CedarGwtOnGaePluginConvention {
             }
         }
 
-        restoreApplicationJavascript()
+        restoreApplicationJavascript()  // this also waits for the server to finish booting
     }
 
     /** Kill the development mode server. */
@@ -224,8 +223,10 @@ class CedarGwtOnGaePluginConvention {
         // since it is unchanged this doesn't make any difference.
         //
         // To work around this, we save off the original nocahe and devmode javascript files
-        // and then put them back after the server rewrites them.  Since the files are only
-        // replaced during the boot process, this apparently solves the problem.
+        // when the application is compiled, and then  put them back after the server rewrites
+        // them, and this usually solves the problem.  Originally, we saved off the files
+        // within bootDevmode(), but it seems to work better to archive them once and always
+        // work off a canonical source.
         //
         // Because we need to wait for the server to come up before copying in the original
         // files, this function also eliminates the need for a separate waitForDevmode()
@@ -235,6 +236,13 @@ class CedarGwtOnGaePluginConvention {
         // the bug that overwrites the compiled code.  Worst-case, we fall back on the old
         // behavior: if no modified files are discovered, the wait loop still times out after
         // the configured server wait period.
+        //
+        // Note: you WILL have problems if you set server wait timeouts that are too small.
+        // If you start seeing the error message shown above, the first thing to try is to
+        // increase the timeouts.  Otherwise, it's possible that the loop below will give up
+        // too early and restore the correct Javascript before the server boot process
+        // has completed replacing it. There's a warning below that tries to give you a hint
+        // about this situation.
         //
         // See the bug I filed: https://code.google.com/p/google-web-toolkit/issues/detail?id=9021
 
@@ -281,6 +289,11 @@ class CedarGwtOnGaePluginConvention {
                 include(name: nocacheJs)
                 include(name: devmodeJs)
             }
+        }
+
+        if (!(foundNocacheJs && foundDevmodeJs)) {
+            logger.warn("Warning: timed out waiting for server boot and restored application Javascript anyway.")
+            logger.warn("If you see error \"GWT module '<app>' may need to be recompiled\", try increasing serverWait or stopWait.")
         }
     }
 
