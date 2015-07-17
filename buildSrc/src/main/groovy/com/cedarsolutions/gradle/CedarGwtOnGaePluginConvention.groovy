@@ -292,8 +292,8 @@ class CedarGwtOnGaePluginConvention {
         }
 
         if (!(foundNocacheJs && foundDevmodeJs)) {
-            logger.warn("Warning: timed out waiting for server boot and restored application Javascript anyway.")
-            logger.warn("If you see error \"GWT module '<app>' may need to be recompiled\", try increasing serverWait or stopWait.")
+            project.logger.warn("Warning: timed out waiting for server boot and restored application Javascript anyway.")
+            project.logger.warn("If you see error \"GWT module '<app>' may need to be recompiled\", try increasing serverWait or stopWait.")
         }
     }
 
