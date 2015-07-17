@@ -1,4 +1,4 @@
-Version 0.9.3   unreleased
+Version 0.9.3   17 Jul 2015
 
     * Fix bug in CedarGwtOnGaePluginConvention, where error would crash instead of logging.
 
