@@ -30,6 +30,6 @@ Version 0.9.x is supported for Gradle 2:
        }
    }
 
-Version 0.8.17 is the last release for Gradle 1. There may be releases later
-than version 0.9.3 for Gradle 2.  Check Maven Central to be sure.
+Version 0.8.17 is the last release for Gradle 1. There may be releases
+later than version 0.9.3 for Gradle 2.  Check Maven Central to be sure.
 
