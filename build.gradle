@@ -27,6 +27,9 @@
 // * Gradle setup
 // *************** 
 
+// Dump the Gradle home directory, which is useful during Jenkins builds
+logger.lifecycle("Gradle home directory: $gradle.startParameter.gradleUserHomeDir")
+
 // Plugins
 apply plugin: "base"
 apply plugin: "groovy"
