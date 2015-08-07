@@ -46,15 +46,22 @@ class CedarAnalysisPluginConvention {
    /**
     * Run JavaNCSS for a set of source folders on a single command-line.
     * This generates output onto the console as well as a complete XML report.
+    * @param name           Name of the report (spaces ok, but no slashes or other special characters)
     * @param sourceFolders  List of source folders
     * See: http://stackoverflow.com/questions/7111362
     * See: http://stackoverflow.com/questions/13474842
     * See: http://stackoverflow.com/questions/19687050
     */
    def runJavancss(name, folders) {
+        println ""
+        println "================================================================="
+        println "JavaNCSS Analysis for " + name
+        println "================================================================="
+        println "See: http://www.kclee.de/clemens/java/javancss/"
+        println ""
 
         def reportDir = project.file(project.projectDir.canonicalPath + "/build/reports/ncss").canonicalPath
-        def reportFile = project.file(reportDir + "/report.xml").canonicalPath
+        def reportFile = project.file(reportDir + "/report-" + name.replaceAll("\\s", "_") + ".xml").canonicalPath
 
         project.file(reportDir).mkdirs()
         project.javaexec {
@@ -63,13 +70,6 @@ class CedarAnalysisPluginConvention {
             args = [ "-recursive", "-all", "-xml", "-out", reportFile ] + folders
         }
 
-        println ""
-        println "================================================================="
-        println "JavaNCSS Analysis for " + name
-        println "================================================================="
-        println "See: http://www.kclee.de/clemens/java/javancss/"
-        println ""
-
         project.javaexec {
             classpath project.configurations.analysis
             main = "javancss.Main"
@@ -77,8 +77,6 @@ class CedarAnalysisPluginConvention {
         }
 
         println ""
-
-
    }
 
 }
