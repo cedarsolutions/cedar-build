@@ -1,4 +1,4 @@
-Version 0.9.4   unreleased
+Version 0.9.4   07 Aug 2015
 
     * Fix runJavancss() to generate a different report XML per the report name.
 
