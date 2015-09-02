@@ -206,7 +206,7 @@ public class CopyrightTool {
      * Get a list of the files tracked in the repository, filtered down to the ones which match a pattern.
      * @param mercurial  Path to the Mercurial (hg) executable.
      * @param repository Mercurial repository to be modified
-     * @param patterns   Regular expression pattern which specifies the files to update.
+     * @param pattern    Regular expression pattern which specifies the files to update.
      * @return List of tracked files.
      */
     protected static List<String> getTrackedFiles(String mercurial, String repository, Pattern pattern) {
