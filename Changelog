@@ -1,6 +1,7 @@
 Version 0.9.5   unreleased
 
-    * Fix Javadoc plugin so it doesn't corrupt images when normalizing line endings.
+    * Convert build process to use CedarJavadoc plugin.
+    * Fix CedarJavadoc plugin so it doesn't corrupt images when normalizing line endings.
 
 Version 0.9.4   07 Aug 2015
 
