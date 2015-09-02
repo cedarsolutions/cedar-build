@@ -36,6 +36,7 @@ apply plugin: "groovy"
 apply plugin: "cedarBuild"
 apply plugin: "cedarCopyright"
 apply plugin: "cedarPublish"
+apply plugin: "cedarJavadoc"
 
 // Load properties from standard configuration files (build.properties and local.properties)
 cedarProperties.loadStandardProperties()
@@ -97,13 +98,12 @@ cedarSigning {
     projects = allprojects
 }
 
-javadoc {
-    options.addStringOption("-quiet")
-}
-
-task jdoc(type: Javadoc) {
-    source = "buildSrc/src/main/java"
-    include( "**/*.java" )
+cedarJavadoc {
+    title = "${artifactId} ${config_mavenPublishVersion} API"
+    output = "${project.docsDir}/javadoc"
+    classpath = { project.configurations.runtime }
+    srcDirs = { [ "buildSrc/src/main/java", ] }
+    subpackages = [ "com" ]
 }
 
 jar {
