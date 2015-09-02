@@ -109,18 +109,21 @@ cedarJavadoc {
 jar {
     from "buildSrc/build/classes/main"
     from "buildSrc/build/resources/main"
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 task javadocJar(type: Jar, dependsOn: jdoc) {
     classifier = "javadoc"
     archiveName = "cedar-build-${baseName}-${version}-${classifier}.${extension}"
     from "${project.docsDir}/javadoc"
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 task sourcesJar(type: Jar) {
     classifier = "sources"
     from "buildSrc/src/main"
     excludes = [ ".settings", ".project", ".classpath", ".gradle", "build", ]
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 artifacts {
