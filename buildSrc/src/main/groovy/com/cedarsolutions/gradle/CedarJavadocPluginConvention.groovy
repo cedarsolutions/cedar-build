@@ -77,7 +77,7 @@ class CedarJavadocPluginConvention {
                     arg(value: "@${optionsFile}")
                 }
 
-                project.ant.fixcrlf(srcdir: output, includes: "**/*", eol: "dos", eof: "asis", fixlast: "false")
+                project.ant.fixcrlf(srcdir: output, includes: "**/*", excludes: "**/*.gif", eol: "dos", eof: "asis", fixlast: "false")
             }
         }
     }

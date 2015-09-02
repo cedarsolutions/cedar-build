@@ -1,3 +1,7 @@
+Version 0.9.5   unreleased
+
+    * Fix Javadoc plugin so it doesn't corrupt images when normalizing line endings.
+
 Version 0.9.4   07 Aug 2015
 
     * Fix runJavancss() to generate a different report XML per the report name.
