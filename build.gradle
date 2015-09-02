@@ -25,6 +25,10 @@
 
 logger.lifecycle("Gradle home directory: $gradle.startParameter.gradleUserHomeDir")
 
+repositories {
+    mavenCentral()
+}
+
 apply plugin: "base"
 apply plugin: "groovy"
 apply plugin: "cedarBuild"
