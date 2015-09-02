@@ -23,14 +23,8 @@
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 // http://stackoverflow.com/questions/1163173/why-use-gradle-instead-of-ant-or-maven
 
-// ***************
-// * Gradle setup
-// *************** 
-
-// Dump the Gradle home directory, which is useful during Jenkins builds
 logger.lifecycle("Gradle home directory: $gradle.startParameter.gradleUserHomeDir")
 
-// Plugins
 apply plugin: "base"
 apply plugin: "groovy"
 apply plugin: "cedarBuild"
@@ -38,20 +32,7 @@ apply plugin: "cedarCopyright"
 apply plugin: "cedarPublish"
 apply plugin: "cedarJavadoc"
 
-// Load properties from standard configuration files (build.properties and local.properties)
 cedarProperties.loadStandardProperties()
-
-
-// ************************
-// * Project configuration
-// ************************
-
-// Note: I'm doing something a little goofy here.  This project creates the
-// gradle plugin that's published to Maven.  However, I also want to *use* that
-// functionality to do the build (particularly the jar signing stuff).  So, I'm
-// kind of bootstrapping the plugin with itself.  The plugin lives in the
-// Gradle buildSrc directory so it can be used by this script, but then the
-// buildSrc artifacts are used to create the published jar file.
 
 group = "com.googlecode.cedar-common"
 def artifactId = "cedar-build"
@@ -66,8 +47,6 @@ targetCompatibility = JavaVersion.VERSION_1_6
 //        options.compilerArgs << "-Xlint:unchecked"
 //    }
 //}
-
-tasks.publish.dependsOn += [ label, ] 
 
 dependencies {
     compile gradleApi()
@@ -84,6 +63,8 @@ cedarLabel {
     repositories = [ projectDir, ]
     mercurialPath = config_mercurialPath
 }
+
+tasks.publish.dependsOn += [ label, ] 
 
 cedarCopyright {
     licensePattern = '^.*LICENSE$'
@@ -144,6 +125,12 @@ cedarPublish {
     mavenRepositoryUser = config_mavenRepositoryUser
 }
 
+install {
+    repositories.mavenInstaller {
+        pom.artifactId = artifactId
+    }
+}
+
 uploadArchives {
     repositories {
         mavenDeployer {
@@ -180,17 +167,6 @@ uploadArchives {
     }
 }
 
-install {
-    repositories.mavenInstaller {
-        pom.artifactId = artifactId
-    }
-}
-
-
-// **********************
-// * General build tasks
-// **********************
-
 // Generate XML bindings for the Mercurial XML output (used by the copyright tool)
 task generateHgBindings << {
     def resourcesDir = "gradle/resources"
@@ -224,6 +200,5 @@ task generateHgBindings << {
     }
 }
 
-// Generate all XML bindings
 task generateXmlBindings(dependsOn: generateHgBindings)
 
