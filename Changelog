@@ -2,6 +2,8 @@ Version 0.9.5   unreleased
 
     * Convert build process to use CedarJavadoc plugin.
     * Fix CedarJavadoc plugin so it doesn't corrupt images when normalizing line endings.
+    * Update CedarAnalysis plugin so clients don't have to define the "analysis" configuration.
+    * Apply JavaPlugin from CedarAnalysis plugin, so it's possible to use it independently.
 
 Version 0.9.4   07 Aug 2015
 

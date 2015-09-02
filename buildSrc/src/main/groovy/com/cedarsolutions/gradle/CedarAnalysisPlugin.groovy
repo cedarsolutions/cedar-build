@@ -27,6 +27,7 @@ package com.cedarsolutions.gradle
 import org.gradle.api.Project
 import org.gradle.api.Plugin
 
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.testing.jacoco.plugins.JacocoPlugin;
 import org.gradle.api.plugins.quality.CheckstylePlugin;
 
@@ -41,6 +42,7 @@ class CedarAnalysisPlugin implements Plugin<Project> {
 
     /** Apply the plugin. */
     void apply(Project project) {
+        project.plugins.apply(JavaPlugin)
         project.plugins.apply(JacocoPlugin)
         project.plugins.apply(CheckstylePlugin)
 
@@ -52,6 +54,14 @@ class CedarAnalysisPlugin implements Plugin<Project> {
 
     /** Apply cedarAnalysis. */
     void applyCedarAnalysis(Project project) {
+
+        // Add required dependencies to the project
+        project.configurations {
+            analysis
+        }
+        project.dependencies {
+            analysis "org.codehaus.javancss:javancss:33.54"
+        } 
 
         // Configure the standard Checkstyle plugin
         project.checkstyle {
