@@ -173,6 +173,7 @@ class CedarCucumberPluginConvention {
                 installJRuby(project.cedarCucumber.getJRubyDownloadUrl())
                 installGem("selenium-webdriver", project.cedarCucumber.getSeleniumVersion())
                 installGem("rspec", project.cedarCucumber.getRspecVersion())
+                installGem("mime-types", project.cedarCucumber.getMimeTypesVersion())
                 installGem("capybara", project.cedarCucumber.getCapybaraVersion())
                 installGem("cucumber", project.cedarCucumber.getCucumberVersion())
                 installGem("headless", project.cedarCucumber.getHeadlessVersion())
