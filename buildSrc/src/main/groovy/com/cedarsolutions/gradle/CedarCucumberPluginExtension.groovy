@@ -67,6 +67,9 @@ class CedarCucumberPluginExtension {
     /** Required version of Rspec gem, possibly null to get latest version. */
     def rspecVersion = "2.14.1"
 
+    /** Required version of mime-types gem, possibly null to get latest version. */
+    def mimeTypesVersion = "2.6.2"
+
     /** Required version of Capybara gem, possibly null to get latest version. */
     def capybaraVersion = "2.1.0"
 
@@ -117,6 +120,11 @@ class CedarCucumberPluginExtension {
     /** Get rspecVersion, accounting for closures. */
     String getRspecVersion() {
         return rspecVersion != null && rspecVersion instanceof Callable ? rspecVersion.call() : rspecVersion
+    }
+
+    /** Get mimeTypesVersion, accounting for closures. */
+    String getMimeTypesVersion() {
+        return mimeTypesVersion != null && mimeTypesVersion instanceof Callable ? mimeTypesVersion.call() : mimeTypesVersion
     }
 
     /** Get capybaraVersion, accounting for closures. */
