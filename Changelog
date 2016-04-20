@@ -1,4 +1,4 @@
-Version 0.9.7   unreleased
+Version 0.9.7   20 Apr 2016
 
     * Adjust build.gradle so the Java source/target compatibility actually works.
 
