@@ -26,6 +26,13 @@ repositories {
     mavenCentral()
 }
 
+// See: http://stackoverflow.com/questions/21028438
+allprojects {
+    apply plugin: 'java'
+    sourceCompatibility = JavaVersion.VERSION_1_6
+    targetCompatibility = JavaVersion.VERSION_1_6
+}
+
 // Don't forget to add the compile dependencies into the parent build.gradle, too.
 dependencies {
     compile "com.google.appengine:gradle-appengine-plugin:1.9.23"
@@ -34,9 +41,6 @@ dependencies {
     testCompile "junit:junit:4.11"
     testCompile "org.mockito:mockito-all:1.9.5"
 }
-
-sourceCompatibility = JavaVersion.VERSION_1_6
-targetCompatibility = JavaVersion.VERSION_1_6
 
 // There's no need for this now, because I've fixed all the warnings.
 //gradle.projectsEvaluated {

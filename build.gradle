@@ -29,6 +29,13 @@ repositories {
     mavenCentral()
 }
 
+// See: http://stackoverflow.com/questions/21028438
+allprojects {
+    apply plugin: 'java'
+    sourceCompatibility = JavaVersion.VERSION_1_6
+    targetCompatibility = JavaVersion.VERSION_1_6
+}
+
 apply plugin: "base"
 apply plugin: "groovy"
 apply plugin: "cedarBuild"
@@ -41,9 +48,6 @@ cedarProperties.loadStandardProperties()
 group = "com.googlecode.cedar-common"
 def artifactId = "cedar-build"
 version = config_mavenPublishVersion
-
-sourceCompatibility = JavaVersion.VERSION_1_6
-targetCompatibility = JavaVersion.VERSION_1_6
 
 // There's no need for this now, because I've fixed all the warnings.
 //gradle.projectsEvaluated {

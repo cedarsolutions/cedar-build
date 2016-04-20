@@ -1,3 +1,7 @@
+Version 0.9.7   unreleased
+
+    * Adjust build.gradle so the Java source/target compatibility actually works.
+
 Version 0.9.6   02 Jan 2016
 
     * Add new JRuby gem dependency on mime-types v2.6.2 to fix Cucumber tests.
