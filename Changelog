@@ -1,4 +1,4 @@
-Version 0.9.8   unreleased
+Version 0.9.8   14 Nov 2016
 
     * Add missing check for proper version of mime-types gem in Cucumber setup.
     * Add explicit version of Rack gem for Cucumber tests, to avoid build failures.
