@@ -174,6 +174,7 @@ class CedarCucumberPluginConvention {
                 installGem("selenium-webdriver", project.cedarCucumber.getSeleniumVersion())
                 installGem("rspec", project.cedarCucumber.getRspecVersion())
                 installGem("mime-types", project.cedarCucumber.getMimeTypesVersion())
+                installGem("rack", project.cedarCucumber.getRackVersion())
                 installGem("capybara", project.cedarCucumber.getCapybaraVersion())
                 installGem("cucumber", project.cedarCucumber.getCucumberVersion())
                 installGem("headless", project.cedarCucumber.getHeadlessVersion())
@@ -239,6 +240,14 @@ class CedarCucumberPluginConvention {
             if (rspecVersion != project.cedarCucumber.getRspecVersion()) {
                 def version = project.cedarCucumber.getRspecVersion()
                 project.logger.warn("Cucumber tests might not work due to version mismatch; expected Rspec ${version}, but got: " + rspecVersion)
+            }
+        }
+
+        if (project.cedarCucumber.getRackVersion() != null) {
+            def rackVersion = getGemVersion("rack")
+            if (rackVersion != project.cedarCucumber.getRackVersion()) {
+                def version = project.cedarCucumber.getRackVersion()
+                project.logger.warn("Cucumber tests might not work due to version mismatch; expected Rack ${version}, but got: " + rackVersion)
             }
         }
 
