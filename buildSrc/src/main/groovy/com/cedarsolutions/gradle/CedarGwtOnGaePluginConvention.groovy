@@ -96,7 +96,7 @@ class CedarGwtOnGaePluginConvention {
         project.file(cacheDir).deleteDir()  // clean up the database every time the server is rebooted
 
         if (project.cedarGwtOnGae.getIsHeadlessModeAvailable()) {
-            project.ant.exec(executable: xvfb, dir: workingDir, spawn: true) {
+            project.ant.exec(executable: xvfb, dir: workingDir, spawn: project.cedarGwtOnGae.getSpawnProcesses()) {
                 arg(value: "--auto-servernum")
                 arg(value: "--server-num=300")
                 arg(value: java)
@@ -122,7 +122,7 @@ class CedarGwtOnGaePluginConvention {
                 arg(value: project.cedarGwtOnGae.getAppEntryPoint())
             }
         } else {
-            project.ant.exec(executable: java, dir: workingDir, spawn: true) {
+            project.ant.exec(executable: java, dir: workingDir, spawn: project.cedarGwtOnGae.getSpawnProcesses()) {
                 arg(value: "-javaagent:" + agentJar)
                 arg(value: "-Xmx" + project.cedarGwtOnGae.getDevmodeServerMemory())
                 arg(value: "-XX:MaxPermSize=" + project.cedarGwtOnGae.getDevmodeServerPermgen())

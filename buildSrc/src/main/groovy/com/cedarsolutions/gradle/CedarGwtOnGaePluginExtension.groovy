@@ -94,6 +94,9 @@ class CedarGwtOnGaePluginExtension {
     /** Location of the xvfb-run script used for headless test runs on UNIX systems. */
     def xvfbRunPath
 
+    /** Whether to spawn GWT processes that are started, normally always true. */
+    def spawnProcesses=true
+
     /** Get appModuleName, accounting for closures. */
     String getAppModuleName() {
         return appModuleName != null && appModuleName instanceof Callable ? appModuleName.call() : appModuleName
@@ -188,6 +191,11 @@ class CedarGwtOnGaePluginExtension {
     /** Get xvfbRunPath, accounting for closures. */
     String getXvfbRunPath() {
         return xvfbRunPath != null && xvfbRunPath instanceof Callable ? xvfbRunPath.call() : xvfbRunPath
+    }
+
+    /** Get spawnProcesses, accounting for closures. */
+    String getSpawnProcesses() {
+        return spawnProcesses != null && spawnProcesses instanceof Callable ? spawnProcesses.call() : spawnProcesses
     }
 
     /** Whether headless mode is available. */
