@@ -243,6 +243,14 @@ class CedarCucumberPluginConvention {
             }
         }
 
+        if (project.cedarCucumber.getMimeTypesVersion() != null) {
+            def mimeTypesVersion = getGemVersion("mime-types")
+            if (mimeTypesVersion != project.cedarCucumber.getMimeTypesVersion()) {
+                def version = project.cedarCucumber.getMimeTypesVersion()
+                project.logger.warn("Cucumber tests might not work due to version mismatch; expected MimeTypes ${version}, but got: " + mimeTypesVersion)
+            }
+        }
+
         if (project.cedarCucumber.getRackVersion() != null) {
             def rackVersion = getGemVersion("rack")
             if (rackVersion != project.cedarCucumber.getRackVersion()) {
