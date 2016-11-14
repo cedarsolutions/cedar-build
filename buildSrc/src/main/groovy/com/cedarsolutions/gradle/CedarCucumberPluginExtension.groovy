@@ -70,6 +70,9 @@ class CedarCucumberPluginExtension {
     /** Required version of mime-types gem, possibly null to get latest version. */
     def mimeTypesVersion = "2.6.2"
 
+    /** Required version of rack gem, possibly null to get latest version. */
+    def rackVersion = "1.6.4";
+
     /** Required version of Capybara gem, possibly null to get latest version. */
     def capybaraVersion = "2.1.0"
 
@@ -125,6 +128,11 @@ class CedarCucumberPluginExtension {
     /** Get mimeTypesVersion, accounting for closures. */
     String getMimeTypesVersion() {
         return mimeTypesVersion != null && mimeTypesVersion instanceof Callable ? mimeTypesVersion.call() : mimeTypesVersion
+    }
+
+    /** Get rackVersion, accounting for closures. */
+    String getRackVersion() {
+        return rackVersion != null && rackVersion instanceof Callable ? rackVersion.call() : rackVersion
     }
 
     /** Get capybaraVersion, accounting for closures. */
