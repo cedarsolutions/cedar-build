@@ -2,6 +2,7 @@ Version 0.9.8   unreleased
 
     * Add missing check for proper version of mime-types gem in Cucumber setup.
     * Add explicit version of Rack gem for Cucumber tests, to avoid build failures.
+    * Add support in GWT plugin to directly control spawn behavior for processes.
 
 Version 0.9.7   20 Apr 2016
 
