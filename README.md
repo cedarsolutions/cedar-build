@@ -6,6 +6,7 @@ Cedar Build is:
 
 Version 0.8.x is supported for Gradle 1:
 
+```
    buildscript {
        repositories {
            mavenLocal()   // Local Maven repository
@@ -16,9 +17,11 @@ Version 0.8.x is supported for Gradle 1:
            classpath "com.googlecode.cedar-common:cedar-build:0.8.17"
        }
    }
+```
 
 Version 0.9.x is supported for Gradle 2:
 
+```
    buildscript {
        repositories {
            mavenLocal()   // Local Maven repository
@@ -29,6 +32,7 @@ Version 0.9.x is supported for Gradle 2:
            classpath "com.googlecode.cedar-common:cedar-build:0.9.3"
        }
    }
+```
 
 Version 0.8.17 is the last release for Gradle 1. There may be releases
 later than version 0.9.3 for Gradle 2.  Check Maven Central to be sure.
