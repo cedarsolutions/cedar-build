@@ -2,7 +2,7 @@ This is the Cedar Build project, which provides Gradle plugins and other
 functionality for use in a standardized build process.  The home page for 
 Cedar Build is:
 
-   https://bitbucket.org/cedarsolutions/cedar-build
+   https://github.com/cedarsolutions/cedar-build
 
 Version 0.8.x is supported for Gradle 1:
 
