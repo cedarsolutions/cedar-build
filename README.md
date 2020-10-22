@@ -1,8 +1,5 @@
 This is the Cedar Build project, which provides Gradle plugins and other
-functionality for use in a standardized build process.  The home page for 
-Cedar Build is:
-
-   https://github.com/cedarsolutions/cedar-build
+functionality for use in a standardized build process.  
 
 Version 0.8.x is supported for Gradle 1:
 
